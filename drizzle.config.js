@@ -5,6 +5,6 @@ export default defineConfig({
   out: "./lib/db/migrations",
   dialect: "postgresql",
   dbCredentials: {
-    url: process.env.DATABASE_URL || "postgresql://postgres:1234567890@localhost:5432/smart_madrasah",
+    url: process.env.POSTGRES_URL || process.env.DATABASE_URL || "postgresql://postgres:1234567890@localhost:5432/smart_madrasah",
   },
 });
