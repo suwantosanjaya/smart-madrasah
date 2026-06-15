@@ -602,7 +602,7 @@ export default function RPPClient({ initialData, initialMapel }) {
               <ReactQuill 
                 theme="snow"
                 value={formData.tujuan}
-                onChange={(val) => setFormData({...formData, tujuan: val})}
+                onChange={(val) => setFormData(prev => ({...prev, tujuan: val}))}
                 placeholder="Setelah mengikuti proses pembelajaran, peserta didik diharapkan dapat..."
                 className="bg-white rounded-lg [&_.ql-editor]:min-h-[100px]"
               />
@@ -616,7 +616,7 @@ export default function RPPClient({ initialData, initialMapel }) {
                   <ReactQuill 
                     theme="snow"
                     value={formData.pendahuluan}
-                    onChange={(val) => setFormData({...formData, pendahuluan: val})}
+                    onChange={(val) => setFormData(prev => ({...prev, pendahuluan: val}))}
                     placeholder="Contoh: Guru membuka kelas dengan salam..."
                     className="bg-white rounded-lg [&_.ql-editor]:min-h-[100px]"
                   />
@@ -626,7 +626,7 @@ export default function RPPClient({ initialData, initialMapel }) {
                   <ReactQuill 
                     theme="snow"
                     value={formData.inti}
-                    onChange={(val) => setFormData({...formData, inti: val})}
+                    onChange={(val) => setFormData(prev => ({...prev, inti: val}))}
                     placeholder="Contoh: Siswa mengamati video, lalu berdiskusi..."
                     className="bg-white rounded-lg [&_.ql-editor]:min-h-[150px]"
                   />
@@ -636,7 +636,7 @@ export default function RPPClient({ initialData, initialMapel }) {
                   <ReactQuill 
                     theme="snow"
                     value={formData.penutup}
-                    onChange={(val) => setFormData({...formData, penutup: val})}
+                    onChange={(val) => setFormData(prev => ({...prev, penutup: val}))}
                     placeholder="Contoh: Guru bersama siswa menyimpulkan..."
                     className="bg-white rounded-lg [&_.ql-editor]:min-h-[100px]"
                   />
@@ -649,7 +649,7 @@ export default function RPPClient({ initialData, initialMapel }) {
               <ReactQuill 
                 theme="snow"
                 value={formData.penilaian}
-                onChange={(val) => setFormData({...formData, penilaian: val})}
+                onChange={(val) => setFormData(prev => ({...prev, penilaian: val}))}
                 placeholder="Contoh: Sikap (Observasi), Pengetahuan (Tes Tertulis), Keterampilan (Unjuk Kerja)"
                 className="bg-white rounded-lg [&_.ql-editor]:min-h-[100px]"
               />
