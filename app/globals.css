@@ -20,12 +20,7 @@
   --sidebar-collapsed: 72px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0f172a;
-    --foreground: #f1f5f9;
-  }
-}
+/* Dark mode disabled for now since UI uses hardcoded light colors */
 
 * {
   scrollbar-width: thin;

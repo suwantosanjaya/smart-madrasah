@@ -212,6 +212,13 @@ export default function LoginPage() {
                 </Button>
               </form>
 
+              <div className="mt-6 text-center text-sm text-slate-500">
+                Belum punya akun Guru?{" "}
+                <Link href="/register" className="text-emerald-600 font-semibold hover:underline">
+                  Daftar di sini
+                </Link>
+              </div>
+
               {/* Demo accounts */}
               <div className="mt-8 pt-6 border-t border-slate-100">
                 <p className="text-xs text-slate-400 text-center mb-4">

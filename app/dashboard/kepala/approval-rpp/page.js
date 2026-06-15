@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { rpp, guru, users } from "@/lib/db/schema";
+import { rpp, guru, users, mapel } from "@/lib/db/schema";
 import { eq, inArray, desc } from "drizzle-orm";
 import ApprovalClient from "./ApprovalClient";
 
@@ -11,7 +11,7 @@ export default async function Page() {
   const rppData = await db
     .select({
       id: rpp.id,
-      mapel: rpp.mapel,
+      mapel: mapel.nama,
       tingkat: rpp.tingkat,
       semester: rpp.semester,
       judul: rpp.judul,
@@ -21,6 +21,7 @@ export default async function Page() {
       inti: rpp.inti,
       penutup: rpp.penutup,
       penilaian: rpp.penilaian,
+      targetKognitif: rpp.targetKognitif,
       status: rpp.status,
       catatanRevisi: rpp.catatanRevisi,
       aiGenerated: rpp.aiGenerated,
@@ -30,6 +31,7 @@ export default async function Page() {
     .from(rpp)
     .leftJoin(guru, eq(rpp.guruId, guru.id))
     .leftJoin(users, eq(guru.userId, users.id))
+    .leftJoin(mapel, eq(rpp.mapelId, mapel.id))
     .where(inArray(rpp.status, ["submitted", "approved", "revision"]))
     .orderBy(desc(rpp.updatedAt));
 

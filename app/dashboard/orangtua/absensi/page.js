@@ -29,17 +29,19 @@ export default async function AbsensiAnakPage(props) {
     return <div className="p-6 text-center">Profil orang tua tidak ditemukan.</div>;
   }
 
-  // Jika tidak ada siswaId di URL, tampilkan pesan error
+  // Jika tidak ada siswaId di URL, otomatis pilih anak pertama
   if (!siswaId) {
-    return (
-      <div className="p-6 text-center">
-        <h2 className="text-xl font-bold text-slate-800">Siswa belum dipilih</h2>
-        <p className="text-slate-500 mb-4">Silakan kembali ke Dashboard untuk memilih anak yang ingin dilihat absensinya.</p>
-        <Link href="/dashboard/orangtua" className="text-emerald-600 hover:underline inline-flex items-center gap-2">
-          <ArrowLeft className="w-4 h-4" /> Kembali ke Dashboard
-        </Link>
-      </div>
-    );
+    const daftarAnak = await db.select({ id: siswa.id }).from(siswa).where(eq(siswa.orangtuaId, dataOrtu[0].id)).orderBy(siswa.id);
+    if (daftarAnak.length > 0) {
+      redirect(`/dashboard/orangtua/absensi?siswaId=${daftarAnak[0].id}`);
+    } else {
+      return (
+        <div className="p-6 text-center">
+          <h2 className="text-xl font-bold text-slate-800">Tidak Ada Data Anak</h2>
+          <p className="text-slate-500 mb-4">Anda belum memiliki profil anak yang terhubung ke akun Anda.</p>
+        </div>
+      );
+    }
   }
 
   // Verifikasi apakah siswaId ini benar-benar anak dari orang tua yang sedang login

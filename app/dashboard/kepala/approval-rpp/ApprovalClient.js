@@ -37,6 +37,21 @@ const statusConfig = {
   revision: { label: "Direvisi", variant: "warning", icon: AlertCircle },
 };
 
+const getTaksonomiLabel = (val) => {
+  if (!val) return "C3 - Mengaplikasikan (MOTS)";
+  if (val.includes("-")) return val;
+  
+  const map = {
+    "C1": "C1 - Mengingat (LOTS)",
+    "C2": "C2 - Memahami (LOTS)",
+    "C3": "C3 - Mengaplikasikan (MOTS)",
+    "C4": "C4 - Menganalisis (HOTS)",
+    "C5": "C5 - Mengevaluasi (HOTS)",
+    "C6": "C6 - Mencipta (HOTS)"
+  };
+  return map[val] || val;
+};
+
 export default function ApprovalClient({ initialData }) {
   const [data, setData] = useState(initialData || []);
   const [isPending, startTransition] = useTransition();
@@ -113,6 +128,7 @@ export default function ApprovalClient({ initialData }) {
                 <tr><td className="py-1.5 font-semibold">Kelas / Fase</td><td>:</td><td>{printData.tingkat}</td></tr>
                 <tr><td className="py-1.5 font-semibold">Semester</td><td>:</td><td>{printData.semester}</td></tr>
                 <tr><td className="py-1.5 font-semibold">Alokasi Waktu</td><td>:</td><td>{printData.alokasiWaktu}</td></tr>
+                <tr><td className="py-1.5 font-semibold">Target Kognitif</td><td>:</td><td className="font-bold text-emerald-700">{getTaksonomiLabel(printData.targetKognitif)}</td></tr>
               </tbody>
             </table>
 
@@ -218,6 +234,9 @@ export default function ApprovalClient({ initialData }) {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <h3 className="font-bold text-lg text-slate-900">{rpp.judul}</h3>
+                      <Badge className="ml-2 bg-emerald-100 text-emerald-800 border-emerald-200 hover:bg-emerald-200 transition-colors">
+                        Taksonomi: {getTaksonomiLabel(rpp.targetKognitif)}
+                      </Badge>
                       <Badge variant={statusCfg.variant} className="ml-2">
                         <statusCfg.icon className="w-3.5 h-3.5 mr-1" />
                         {statusCfg.label}

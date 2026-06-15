@@ -14,7 +14,7 @@ export default async function SuperAdminKepsekPage() {
   const session = await auth();
   if (!session) redirect("/login");
 
-  if (session.user.activeRole !== "super_admin") {
+  if (!["super_admin", "admin"].includes(session.user.activeRole)) {
     redirect("/dashboard");
   }
 
@@ -47,7 +47,7 @@ export default async function SuperAdminKepsekPage() {
         <div className="text-sm text-sky-800 leading-relaxed">
           <p className="font-semibold mb-1">Mekanisme Penetapan</p>
           <ul className="list-disc list-inside space-y-1">
-            <li>Kandidat dipilih dari daftar Guru/Staff aktif di sistem.</li>
+            <li>Kandidat dipilih dari daftar Guru aktif di sistem.</li>
             <li>Guru yang terpilih akan mendapatkan peran (role) tambahan sebagai <strong>Kepala Madrasah</strong>.</li>
             <li>Pejabat yang lama otomatis berstatus Purna Tugas dan perannya sebagai Kepala Madrasah dicabut (peran Guru tetap).</li>
             <li>Nama di "Profil Madrasah" akan diperbarui secara otomatis.</li>

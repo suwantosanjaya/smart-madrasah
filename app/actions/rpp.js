@@ -9,7 +9,7 @@ export async function createRpp(data) {
   try {
     await db.insert(rpp).values({
       guruId: 1, // MOCK: Nantinya diganti dengan ID sesi user aktif
-      mapel: data.mapel,
+      mapelId: data.mapelId,
       tingkat: data.tingkat,
       semester: data.semester,
       judul: data.judul,
@@ -19,6 +19,7 @@ export async function createRpp(data) {
       inti: data.inti,
       penutup: data.penutup,
       penilaian: data.penilaian,
+      targetKognitif: data.targetKognitif || "C3",
       status: data.status || "draft",
       aiGenerated: data.aiGenerated ? 1 : 0,
       updatedAt: new Date().toISOString(),
@@ -34,7 +35,7 @@ export async function createRpp(data) {
 export async function updateRpp(id, data) {
   try {
     await db.update(rpp).set({
-      mapel: data.mapel,
+      mapelId: data.mapelId,
       tingkat: data.tingkat,
       semester: data.semester,
       judul: data.judul,
@@ -44,6 +45,7 @@ export async function updateRpp(id, data) {
       inti: data.inti,
       penutup: data.penutup,
       penilaian: data.penilaian,
+      targetKognitif: data.targetKognitif || "C3",
       status: data.status,
       aiGenerated: data.aiGenerated ? 1 : 0,
       updatedAt: new Date().toISOString(),

@@ -4,6 +4,8 @@ import { useState } from "react";
 import { MoreHorizontal, Edit, Trash2, ShieldOff, ShieldCheck, Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toggleStatusStaff, deleteStaff } from "@/app/actions/staffActions";
+import { resetPassword } from "@/app/actions/userActions";
+import { RefreshCcw } from "lucide-react";
 
 // Dialog/Modal UI Kustom
 function CustomDialog({ isOpen, title, message, onConfirm, onCancel, type = "danger", isLoading = false }) {
@@ -51,8 +53,34 @@ export default function StaffTableClient({ daftarStaff, currentUserRole, current
   const [itemsPerPage, setItemsPerPage] = useState(10);
   
   // Custom Dialog States
-  const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: "", message: "", action: null });
+  const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: "", message: "", action: null, type: "danger" });
   const [alertDialog, setAlertDialog] = useState({ isOpen: false, title: "", message: "", type: "info" });
+
+  const handleResetPassword = async (userId) => {
+    setOpenDropdownId(null);
+    setConfirmDialog({
+      isOpen: true,
+      title: "Reset Password",
+      message: "Password akan direset menjadi '123456'. Pengguna akan diwajibkan mengganti password pada saat login berikutnya. Lanjutkan?",
+      type: "warning",
+      action: async () => {
+        setLoadingId(userId);
+        try {
+          const res = await resetPassword(userId);
+          if (!res.success) {
+            setAlertDialog({ isOpen: true, title: "Gagal", message: res.error || "Gagal mereset", type: "danger" });
+          } else {
+            setAlertDialog({ isOpen: true, title: "Berhasil", message: res.message, type: "info" });
+          }
+        } catch (err) {
+          setAlertDialog({ isOpen: true, title: "Error", message: "Kesalahan jaringan", type: "danger" });
+        } finally {
+          setLoadingId(null);
+          setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+        }
+      }
+    });
+  };
 
   const handleToggleStatus = async (userId, currentStatus) => {
     setOpenDropdownId(null);
@@ -233,6 +261,14 @@ export default function StaffTableClient({ daftarStaff, currentUserRole, current
                                     </button>
                                     
                                     <button 
+                                      onClick={() => handleResetPassword(item.id)}
+                                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 flex items-center gap-2 text-slate-700 transition-colors"
+                                    >
+                                      <RefreshCcw className="w-4 h-4 text-amber-500" />
+                                      <span className="font-medium">Reset Password</span>
+                                    </button>
+                                    
+                                    <button 
                                       onClick={() => handleToggleStatus(item.id, item.isActive)}
                                       className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 flex items-center gap-2 text-slate-700 transition-colors"
                                     >
@@ -295,7 +331,7 @@ export default function StaffTableClient({ daftarStaff, currentUserRole, current
         message={confirmDialog.message} 
         onConfirm={confirmDialog.action} 
         onCancel={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))} 
-        type="danger" 
+        type={confirmDialog.type || "danger"} 
         isLoading={loadingId !== null} 
       />
       <CustomDialog 

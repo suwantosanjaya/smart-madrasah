@@ -26,6 +26,7 @@ export default async function AdminUsersPage() {
       orangtuaId: orangtua.id,
       namaOrtu: orangtua.namaAyah,
       noHpOrtu: orangtua.noHp,
+      userIdOrtu: orangtua.userId,
     })
     .from(siswa)
     .leftJoin(kelas, eq(siswa.kelasId, kelas.id))

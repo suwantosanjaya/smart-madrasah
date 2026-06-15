@@ -4,7 +4,9 @@ import { useState } from "react";
 import { UserPlus, MoreHorizontal, Edit, Trash2, ShieldOff, ShieldCheck, AlertTriangle, Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toggleStatusSiswa, hapusSiswaPermanen } from "@/app/actions/siswaActions";
+import { resetPassword } from "@/app/actions/userActions";
 import EditSiswaModal from "./EditSiswaModal";
+import { RefreshCcw } from "lucide-react";
 
 export default function UsersTableClient({ daftarSiswa, daftarKelas }) {
   const router = useRouter();
@@ -47,6 +49,34 @@ export default function UsersTableClient({ daftarSiswa, daftarKelas }) {
           }
         } catch (err) {
           setAlertDialog({ isOpen: true, title: "Error Sistem", message: "Terjadi kesalahan sistem (jaringan/cache). Harap Refresh halaman (F5).", type: "error" });
+        }
+        setLoadingId(null);
+      }
+    });
+  };
+
+  const handleResetPassword = async (userId) => {
+    setOpenDropdownId(null);
+    if (!userId) {
+      setAlertDialog({ isOpen: true, title: "Gagal", message: "ID User Orang Tua tidak ditemukan.", type: "error" });
+      return;
+    }
+    setConfirmDialog({
+      isOpen: true,
+      title: "Reset Password",
+      message: "Password akun orang tua akan direset menjadi '123456'. Pengguna akan diwajibkan mengganti password pada saat login berikutnya. Lanjutkan?",
+      action: async () => {
+        setConfirmDialog({ isOpen: false });
+        setLoadingId(userId); 
+        try {
+          const res = await resetPassword(userId);
+          if (res.success) {
+            setAlertDialog({ isOpen: true, title: "Berhasil", message: res.message, type: "info" });
+          } else {
+            setAlertDialog({ isOpen: true, title: "Gagal", message: res.error, type: "error" });
+          }
+        } catch (err) {
+          setAlertDialog({ isOpen: true, title: "Error Sistem", message: "Terjadi kesalahan sistem.", type: "error" });
         }
         setLoadingId(null);
       }
@@ -238,6 +268,16 @@ export default function UsersTableClient({ daftarSiswa, daftarKelas }) {
                           >
                             <Edit className="w-4 h-4 text-blue-600" />
                             <span className="text-blue-700 font-medium">Edit Profil</span>
+                          </button>
+                          
+                          {/* Tombol Reset Password */}
+                          <button 
+                            onClick={() => handleResetPassword(item.userIdOrtu)}
+                            disabled={!item.userIdOrtu}
+                            className={`w-full text-left px-4 py-2.5 text-sm flex items-center gap-2 transition-colors ${!item.userIdOrtu ? 'opacity-50 cursor-not-allowed text-slate-400' : 'hover:bg-slate-50 text-amber-700'}`}
+                          >
+                            <RefreshCcw className="w-4 h-4 text-amber-500" />
+                            <span className="font-medium">Reset Password Ortu</span>
                           </button>
                           
                           {/* Tombol Nonaktifkan/Aktifkan */}

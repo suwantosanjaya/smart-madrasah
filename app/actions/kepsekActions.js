@@ -21,7 +21,7 @@ export async function getCandidates() {
       .from(users)
       .innerJoin(userRoles, eq(users.id, userRoles.userId))
       .innerJoin(roles, eq(userRoles.roleId, roles.id))
-      .where(sql`${roles.namaRole} IN ('guru', 'admin')`);
+      .where(eq(roles.namaRole, 'guru'));
 
     // Deduplicate if a user has multiple roles
     const uniqueCandidates = [];
@@ -75,7 +75,7 @@ export async function getRiwayatKepsek() {
 export async function setKepalaMadrasah(formData) {
   try {
     const session = await auth();
-    if (!session || session.user.activeRole !== "super_admin") {
+    if (!session || !["super_admin", "admin"].includes(session.user.activeRole)) {
       return { success: false, error: "Akses ditolak." };
     }
 
@@ -124,14 +124,14 @@ export async function setKepalaMadrasah(formData) {
           tanggalSelesai: tanggalMulai // Selesai ketika yang baru mulai
         })
         .where(eq(riwayatJabatan.id, currentActive.id));
-
-      // Cabut role dari user lama (biarkan role lain jika dia guru/admin)
-      await db.delete(userRoles)
-        .where(and(
-          eq(userRoles.userId, currentActive.userId),
-          eq(userRoles.roleId, kepsekRole.id)
-        ));
     }
+
+    // Cabut role kepala_madrasah dari SEMUA user selain user yang baru terpilih (mencegah orphaned roles akibat seed)
+    await db.delete(userRoles)
+      .where(and(
+        eq(userRoles.roleId, kepsekRole.id),
+        sql`${userRoles.userId} != ${userId}`
+      ));
 
     // 3. Masukkan riwayat jabatan baru
     const [m] = await db.select().from(madrasah).limit(1);
@@ -167,6 +167,7 @@ export async function setKepalaMadrasah(formData) {
         .where(eq(madrasah.id, m.id));
     }
 
+    revalidatePath("/dashboard/admin/kepala-sekolah");
     revalidatePath("/dashboard/superadmin/kepala-sekolah");
     revalidatePath("/dashboard/admin/madrasah");
     

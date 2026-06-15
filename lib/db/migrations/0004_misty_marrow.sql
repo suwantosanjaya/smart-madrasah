@@ -1,0 +1,1 @@
+ALTER TABLE "rpp" ADD COLUMN "target_kognitif" text DEFAULT 'C3';

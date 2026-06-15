@@ -8,6 +8,34 @@
       "when": 1781344297450,
       "tag": "0000_moaning_doctor_spectrum",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1781486089823,
+      "tag": "0001_misty_the_leader",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1781486107497,
+      "tag": "0002_supreme_mister_sinister",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1781487067178,
+      "tag": "0003_certain_blue_shield",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1781487293057,
+      "tag": "0004_misty_marrow",
+      "breakpoints": true
     }
   ]
 }

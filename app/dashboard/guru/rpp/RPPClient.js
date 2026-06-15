@@ -42,10 +42,24 @@ const statusConfig = {
   revision: { label: "Revisi", variant: "warning", icon: AlertCircle },
 };
 
+const getTaksonomiLabel = (val) => {
+  if (!val) return "C3 - Mengaplikasikan (MOTS)";
+  if (val.includes("-")) return val; // Sudah full format
+  
+  const map = {
+    "C1": "C1 - Mengingat (LOTS)",
+    "C2": "C2 - Memahami (LOTS)",
+    "C3": "C3 - Mengaplikasikan (MOTS)",
+    "C4": "C4 - Menganalisis (HOTS)",
+    "C5": "C5 - Mengevaluasi (HOTS)",
+    "C6": "C6 - Mencipta (HOTS)"
+  };
+  return map[val] || val;
+};
+
 export default function RPPClient({ initialData, initialMapel }) {
   const [data, setData] = useState(initialData || []);
   const [isPending, startTransition] = useTransition();
-  const [isCustomMapel, setIsCustomMapel] = useState(false);
 
   useEffect(() => {
     if (initialData) setData(initialData);
@@ -67,7 +81,7 @@ export default function RPPClient({ initialData, initialMapel }) {
 
   const [formData, setFormData] = useState({
     judul: "",
-    mapel: "Bahasa Indonesia",
+    mapelId: initialMapel?.[0]?.id || "",
     tingkat: "Kelas 3 (Fase B)",
     semester: "Ganjil",
     alokasiWaktu: "2 x 35 Menit",
@@ -76,6 +90,7 @@ export default function RPPClient({ initialData, initialMapel }) {
     inti: "",
     penutup: "",
     penilaian: "",
+    targetKognitif: "C3",
     status: "draft",
   });
 
@@ -97,7 +112,7 @@ export default function RPPClient({ initialData, initialMapel }) {
     setIsReadOnly(false);
     setFormData({
       judul: "",
-      mapel: "Bahasa Indonesia",
+      mapelId: initialMapel?.[0]?.id || "",
       tingkat: "Kelas 3 (Fase B)",
       semester: "Ganjil",
       alokasiWaktu: "2 x 35 Menit",
@@ -106,9 +121,9 @@ export default function RPPClient({ initialData, initialMapel }) {
       inti: "",
       penutup: "",
       penilaian: "",
+      targetKognitif: "C3",
       status: "draft",
     });
-    setIsCustomMapel(false);
     setIsModalOpen(true);
   };
 
@@ -116,11 +131,6 @@ export default function RPPClient({ initialData, initialMapel }) {
     setEditingItem(item);
     setFormData(item);
     setIsReadOnly(readOnly);
-    
-    // Check if mapel is in initialMapel, if not, set custom to true
-    const isStandard = initialMapel?.some(m => m.nama === item.mapel);
-    setIsCustomMapel(!isStandard);
-    
     setIsModalOpen(true);
   };
 
@@ -139,11 +149,13 @@ export default function RPPClient({ initialData, initialMapel }) {
   };
 
   const handleAIGenerate = async () => {
-    if (!formData.judul || !formData.mapel) {
+    if (!formData.judul || !formData.mapelId) {
       alert("Mohon isi Materi Pokok dan Mata Pelajaran terlebih dahulu agar AI bisa bekerja.");
       return;
     }
     
+    const selectedMapel = initialMapel?.find(m => m.id == formData.mapelId)?.nama || "Mata Pelajaran";
+
     setIsGenerating(true);
     try {
       const res = await fetch("/api/ai/generate-rpp", {
@@ -151,9 +163,10 @@ export default function RPPClient({ initialData, initialMapel }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           judul: formData.judul,
-          mapel: formData.mapel,
+          mapel: selectedMapel,
           tingkat: formData.tingkat,
           semester: formData.semester,
+          targetKognitif: formData.targetKognitif,
         })
       });
       const aiData = await res.json();
@@ -179,16 +192,19 @@ export default function RPPClient({ initialData, initialMapel }) {
   };
 
   const handleSave = () => {
+    const selectedMapelName = initialMapel?.find(m => m.id === formData.mapelId)?.nama || "Mata Pelajaran";
+    const dataToSave = { ...formData, mapel: selectedMapelName };
+
     if (editingItem) {
-      setData(data.map(item => item.id === editingItem.id ? { ...formData, id: item.id, updatedAt: new Date().toISOString() } : item));
+      setData(data.map(item => item.id === editingItem.id ? { ...dataToSave, id: item.id, updatedAt: new Date().toISOString() } : item));
       startTransition(() => {
-        updateRpp(editingItem.id, formData);
+        updateRpp(editingItem.id, dataToSave);
       });
     } else {
       const tempId = Date.now();
-      setData([...data, { ...formData, id: tempId, aiGenerated: formData.aiGenerated || false, updatedAt: new Date().toISOString() }]);
+      setData([...data, { ...dataToSave, id: tempId, aiGenerated: dataToSave.aiGenerated || false, updatedAt: new Date().toISOString() }]);
       startTransition(() => {
-        createRpp(formData);
+        createRpp(dataToSave);
       });
     }
     setIsModalOpen(false);
@@ -235,6 +251,7 @@ export default function RPPClient({ initialData, initialMapel }) {
                 <tr><td className="py-1.5 font-semibold">Kelas / Fase</td><td>:</td><td>{printData.tingkat}</td></tr>
                 <tr><td className="py-1.5 font-semibold">Semester</td><td>:</td><td>{printData.semester}</td></tr>
                 <tr><td className="py-1.5 font-semibold">Alokasi Waktu</td><td>:</td><td>{printData.alokasiWaktu}</td></tr>
+                <tr><td className="py-1.5 font-semibold">Target Kognitif</td><td>:</td><td className="font-bold text-emerald-700">{getTaksonomiLabel(printData.targetKognitif)}</td></tr>
               </tbody>
             </table>
 
@@ -380,6 +397,9 @@ export default function RPPClient({ initialData, initialMapel }) {
                         <div className="flex items-center gap-2 flex-wrap mt-2">
                           <Badge variant="outline">{rpp.mapel}</Badge>
                           <Badge variant="secondary">{rpp.tingkat} - Smt {rpp.semester}</Badge>
+                          <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200">
+                            Taksonomi: {getTaksonomiLabel(rpp.targetKognitif)}
+                          </Badge>
                           <Badge variant={statusCfg.variant}>
                             <statusCfg.icon className="w-3 h-3 mr-1" />
                             {statusCfg.label}
@@ -467,37 +487,16 @@ export default function RPPClient({ initialData, initialMapel }) {
               </div>
               <div className="space-y-2">
                 <Label>Mata Pelajaran</Label>
-                {isCustomMapel && !isReadOnly ? (
-                  <div className="flex gap-2">
-                    <Input 
-                      value={formData.mapel}
-                      onChange={(e) => setFormData({...formData, mapel: e.target.value})}
-                      placeholder="Ketik mata pelajaran baru..."
-                      autoFocus
-                    />
-                    <Button variant="outline" onClick={() => { setIsCustomMapel(false); setFormData({...formData, mapel: initialMapel?.[0]?.nama || "Bahasa Indonesia"}); }}>Batal</Button>
-                  </div>
-                ) : (
-                  <select 
-                    value={formData.mapel}
-                    onChange={(e) => {
-                      if (e.target.value === "Lainnya") {
-                        setIsCustomMapel(true);
-                        setFormData({...formData, mapel: ""});
-                      } else {
-                        setFormData({...formData, mapel: e.target.value});
-                      }
-                    }}
-                    disabled={isReadOnly}
-                    className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:border-emerald-500 transition-all duration-200 disabled:opacity-50 disabled:bg-slate-50"
-                  >
-                    {initialMapel?.map(m => (
-                      <option key={m.id} value={m.nama}>{m.nama}</option>
-                    ))}
-                    {!isReadOnly && <option value="Lainnya">+ Tambah Lainnya...</option>}
-                    {isReadOnly && isCustomMapel && <option value={formData.mapel}>{formData.mapel}</option>}
-                  </select>
-                )}
+                <select 
+                  value={formData.mapelId}
+                  onChange={(e) => setFormData({...formData, mapelId: parseInt(e.target.value)})}
+                  disabled={isReadOnly}
+                  className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:border-emerald-500 transition-all duration-200 disabled:opacity-50 disabled:bg-slate-50"
+                >
+                  {initialMapel?.map(m => (
+                    <option key={m.id} value={m.id}>{m.nama}</option>
+                  ))}
+                </select>
               </div>
             </div>
 
@@ -535,6 +534,24 @@ export default function RPPClient({ initialData, initialMapel }) {
                   onChange={(e) => setFormData({...formData, alokasiWaktu: e.target.value})} 
                   placeholder="Misal: 2 x 35 Menit"
                 />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label>Target Taksonomi Bloom</Label>
+                <select 
+                  value={formData.targetKognitif}
+                  onChange={(e) => setFormData({...formData, targetKognitif: e.target.value})}
+                  className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:border-emerald-500 transition-all duration-200"
+                >
+                  <option value="C1 - Mengingat">C1 - Mengingat (LOTS)</option>
+                  <option value="C2 - Memahami">C2 - Memahami (LOTS)</option>
+                  <option value="C3 - Mengaplikasikan">C3 - Mengaplikasikan (MOTS)</option>
+                  <option value="C4 - Menganalisis">C4 - Menganalisis (HOTS)</option>
+                  <option value="C5 - Mengevaluasi">C5 - Mengevaluasi (HOTS)</option>
+                  <option value="C6 - Mencipta">C6 - Mencipta (HOTS)</option>
+                </select>
               </div>
             </div>
 

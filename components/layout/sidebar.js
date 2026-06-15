@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useSidebarContext } from "@/app/dashboard/DashboardLayoutClient";
 import {
   GraduationCap,
@@ -38,7 +38,7 @@ export const menuConfig = {
       { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
       { href: "/dashboard/superadmin/admins", icon: ShieldCheck, label: "Manajemen Admin" },
       { href: "/dashboard/admin/madrasah", icon: School, label: "Profil Madrasah" },
-      { href: "/dashboard/superadmin/kepala-sekolah", icon: UserCog, label: "Riwayat Kepala Sekolah" },
+      { href: "/dashboard/admin/kepala-sekolah", icon: UserCog, label: "Riwayat Kepala Sekolah" },
     ],
   },
   admin: {
@@ -47,11 +47,15 @@ export const menuConfig = {
     bgColor: "bg-red-50",
     items: [
       { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+      { href: "/dashboard/admin/madrasah", icon: School, label: "Profil Madrasah" },
+      { href: "/dashboard/admin/kepala-sekolah", icon: UserCog, label: "Riwayat Kepala Sekolah" },
       { href: "/dashboard/admin/users", icon: Users, label: "Siswa & Orang Tua" },
       { href: "/dashboard/admin/staff", icon: Briefcase, label: "Guru & Staf" },
       { href: "/dashboard/admin/mapel", icon: BookOpen, label: "Mata Pelajaran" },
       { href: "/dashboard/admin/kelas", icon: FolderOpen, label: "Kelola Kelas" },
       { href: "/dashboard/admin/rombel", icon: ListChecks, label: "Manajemen Rombel" },
+      { href: "/dashboard/admin/jadwal", icon: CalendarDays, label: "Jadwal Mengajar" },
+      { href: "/dashboard/admin/halaqah", icon: Users, label: "Kelompok Tahfizh" },
       { href: "/dashboard/admin/tahun-ajaran", icon: CalendarDays, label: "Tahun Ajaran" },
       { href: "/dashboard/admin/pengumuman", icon: Megaphone, label: "Pengumuman" },
       { href: "/dashboard/admin/settings", icon: Settings, label: "Pengaturan" },
@@ -112,13 +116,37 @@ export const menuConfig = {
   },
 };
 
-export default function Sidebar({ session, madrasahName = "Smart Madrasah" }) {
+export default function Sidebar({ session, madrasahName = "Smart Madrasah", teacherAccess = {} }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const siswaId = searchParams.get("siswaId");
   const { sidebarOpen, setSidebarOpen, mobileSidebarOpen, setMobileSidebarOpen } =
     useSidebarContext();
 
   const activeRole = session?.user?.activeRole || "guru";
-  const menu = menuConfig[activeRole] || menuConfig.guru;
+  let menu = menuConfig[activeRole] || menuConfig.guru;
+
+  if (activeRole === "guru") {
+    // Dynamic filtering based on database assignment
+    const filteredItems = menu.items.filter((item) => {
+      // Hide Tahfizh menu if not assigned as Tahfizh teacher
+      if (item.href === "/dashboard/guru/tahfizh" && !teacherAccess.isGuruTahfizh) {
+        return false;
+      }
+      return true;
+    });
+
+    // Add Wali Kelas menu if assigned
+    if (teacherAccess.isWaliKelas) {
+      filteredItems.push({
+        href: "/dashboard/guru/wali-kelas",
+        icon: Users,
+        label: "Wali Kelas (Rapor)",
+      });
+    }
+
+    menu = { ...menu, items: filteredItems };
+  }
 
   const isActive = (href) => {
     if (href === "/dashboard") return pathname === "/dashboard";
@@ -168,13 +196,19 @@ export default function Sidebar({ session, madrasahName = "Smart Madrasah" }) {
         {/* Menu Items */}
         <nav className="flex-1 overflow-y-auto py-3 px-2">
           <div className="space-y-1">
-            {menu.items.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 group relative",
-                  isActive(item.href)
+            {menu.items.map((item) => {
+              let finalHref = item.href;
+              if (activeRole === "orangtua" && siswaId && item.href !== "/dashboard/orangtua" && item.href !== "/dashboard/orangtua/pengumuman") {
+                finalHref = `${item.href}?siswaId=${siswaId}`;
+              }
+
+              return (
+                <Link
+                  key={item.href}
+                  href={finalHref}
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 group relative",
+                    isActive(item.href)
                     ? "bg-emerald-50 text-emerald-700 font-medium sidebar-link-active"
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                 )}
@@ -195,7 +229,8 @@ export default function Sidebar({ session, madrasahName = "Smart Madrasah" }) {
                   </div>
                 )}
               </Link>
-            ))}
+              );
+            })}
           </div>
         </nav>
 
@@ -250,14 +285,20 @@ export default function Sidebar({ session, madrasahName = "Smart Madrasah" }) {
         {/* Menu */}
         <nav className="flex-1 overflow-y-auto py-3 px-2">
           <div className="space-y-1">
-            {menu.items.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setMobileSidebarOpen(false)}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200",
-                  isActive(item.href)
+            {menu.items.map((item) => {
+              let finalHref = item.href;
+              if (activeRole === "orangtua" && siswaId && item.href !== "/dashboard/orangtua" && item.href !== "/dashboard/orangtua/pengumuman") {
+                finalHref = `${item.href}?siswaId=${siswaId}`;
+              }
+              
+              return (
+                <Link
+                  key={item.href}
+                  href={finalHref}
+                  onClick={() => setMobileSidebarOpen(false)}
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200",
+                    isActive(item.href)
                     ? "bg-emerald-50 text-emerald-700 font-medium sidebar-link-active"
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                 )}
@@ -270,7 +311,8 @@ export default function Sidebar({ session, madrasahName = "Smart Madrasah" }) {
                 />
                 <span>{item.label}</span>
               </Link>
-            ))}
+              );
+            })}
           </div>
         </nav>
       </aside>

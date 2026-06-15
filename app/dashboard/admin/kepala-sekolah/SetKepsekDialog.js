@@ -73,7 +73,7 @@ export default function SetKepsekDialog({ candidates }) {
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Pilih Guru / Staff</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Pilih Guru</label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
                     <select name="userId" required

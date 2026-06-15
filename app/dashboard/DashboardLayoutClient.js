@@ -7,7 +7,7 @@ import Header from "@/components/layout/header";
 const SidebarContext = createContext();
 export const useSidebarContext = () => useContext(SidebarContext);
 
-export default function DashboardLayoutClient({ children, session, madrasahName }) {
+export default function DashboardLayoutClient({ children, session, madrasahName, teacherAccess }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
@@ -17,7 +17,7 @@ export default function DashboardLayoutClient({ children, session, madrasahName 
     >
       <div className="min-h-screen bg-slate-50 flex">
         {/* Sidebar */}
-        <Sidebar session={session} madrasahName={madrasahName} />
+        <Sidebar session={session} madrasahName={madrasahName} teacherAccess={teacherAccess} />
 
         {/* Mobile sidebar overlay */}
         {mobileSidebarOpen && (

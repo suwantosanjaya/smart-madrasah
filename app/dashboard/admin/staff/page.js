@@ -59,9 +59,25 @@ export default async function AdminStaffPage() {
     .orderBy(desc(users.id));
 
   // Filter out role yang bukan staff
-  let staffData = staffQuery.filter(
+  let filteredStaff = staffQuery.filter(
     (u) => ["super_admin", "admin", "kepala_madrasah", "guru"].includes(u.namaRole)
   );
+
+  // Group by user ID to prevent duplicate rows if a user has multiple roles
+  const userMap = new Map();
+  for (const staff of filteredStaff) {
+    if (!userMap.has(staff.id)) {
+      userMap.set(staff.id, { ...staff, allRoles: [staff.labelRole] });
+    } else {
+      const existing = userMap.get(staff.id);
+      if (!existing.allRoles.includes(staff.labelRole)) {
+        existing.allRoles.push(staff.labelRole);
+        // Update labelRole to show multiple roles (e.g., "Guru, Kepala Madrasah")
+        existing.labelRole = existing.allRoles.join(", ");
+      }
+    }
+  }
+  let staffData = Array.from(userMap.values());
 
   // Jika currentUserRole adalah 'admin', sembunyikan super_admin dan sesama admin (kecuali dirinya sendiri)
   if (currentUserRole === "admin") {

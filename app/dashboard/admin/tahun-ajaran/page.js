@@ -1,17 +1,31 @@
-"use client";
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { tahunAjaran } from "@/lib/db/schema";
+import { desc } from "drizzle-orm";
+import TahunAjaranClient from "./TahunAjaranClient";
 
-import { Construction } from "lucide-react";
+export const metadata = {
+  title: "Kelola Tahun Ajaran | Smart Madrasah",
+};
 
-export default function PlaceholderPage() {
+export default async function TahunAjaranPage() {
+  const session = await auth();
+  
+  if (!session || !session.user || session.user.activeRole !== "admin") {
+    redirect("/login");
+  }
+
+  const data = await db.select().from(tahunAjaran).orderBy(desc(tahunAjaran.tanggalMulai));
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-      <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mb-6">
-        <Construction className="w-10 h-10 text-emerald-600" />
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-slate-900">Manajemen Tahun Ajaran</h1>
+        <p className="text-slate-500 mt-1">Kelola data tahun akademik dan semester untuk sistem madrasah.</p>
       </div>
-      <h1 className="text-2xl font-bold text-slate-900 mb-2">Halaman Tahun Ajaran</h1>
-      <p className="text-slate-500 max-w-md mx-auto">
-        Halaman ini sedang dalam tahap pengembangan (Fase 2). Fitur ini akan segera tersedia untuk Smart Madrasah.
-      </p>
+
+      <TahunAjaranClient initialData={data} />
     </div>
   );
 }

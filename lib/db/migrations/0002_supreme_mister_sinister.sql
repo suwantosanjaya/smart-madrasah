@@ -1,0 +1,2 @@
+ALTER TABLE "rpp" ADD COLUMN "mapel_id" integer;--> statement-breakpoint
+ALTER TABLE "rpp" ADD CONSTRAINT "rpp_mapel_id_mapel_id_fk" FOREIGN KEY ("mapel_id") REFERENCES "public"."mapel"("id") ON DELETE cascade ON UPDATE no action;

@@ -32,7 +32,10 @@ export default function Header({ session }) {
   const searchRef = useRef(null);
 
   const userName = session?.user?.name || "User";
-  const userEmail = session?.user?.email || "";
+  let userEmail = session?.user?.email || "";
+  if (userEmail.endsWith("@ortu.madrasah.id")) {
+    userEmail = "HP: " + userEmail.replace("@ortu.madrasah.id", "");
+  }
   const initials = userName
     .split(" ")
     .map((n) => n[0])
@@ -58,8 +61,11 @@ export default function Header({ session }) {
     await update({ activeRole: roleName });
     setProfileOpen(false);
     setIsSwitchingRole(false);
-    // Refresh halaman agar state server component menyesuaikan role baru
-    router.refresh();
+    
+    // Redirect ke halaman default peran baru agar URL sinkron
+    const targetUrl = menuConfig[roleName]?.items?.[0]?.href || "/dashboard";
+    router.push(targetUrl);
+    router.refresh(); // Opsional: pastikan state server di-refresh di halaman baru
   };
 
   // Close dropdowns when clicking outside
