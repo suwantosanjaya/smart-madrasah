@@ -275,7 +275,7 @@ export default function RPPClient({ initialData, initialMapel }) {
                 <tr><td className="py-1.5 font-semibold">Kelas / Fase</td><td>:</td><td>{printData.tingkat}</td></tr>
                 <tr><td className="py-1.5 font-semibold">Semester</td><td>:</td><td>{printData.semester}</td></tr>
                 <tr><td className="py-1.5 font-semibold">Alokasi Waktu</td><td>:</td><td>{printData.alokasiWaktu}</td></tr>
-                <tr><td className="py-1.5 font-semibold">Target Kognitif</td><td>:</td><td className="font-bold text-emerald-700">{getTaksonomiLabel(printData.targetKognitif)}</td></tr>
+                <tr><td className="py-1.5 font-semibold">Target Kognitif</td><td>:</td><td className="font-bold">{getTaksonomiLabel(printData.targetKognitif)}</td></tr>
               </tbody>
             </table>
 
