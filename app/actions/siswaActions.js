@@ -163,15 +163,22 @@ export async function searchOrangTuaByHp(noHp) {
   if (!noHp || noHp.length < 5) return null;
   
   try {
-    const result = await db.select()
+    const result = await db.select({
+      id: orangtua.id,
+      namaAyah: orangtua.namaAyah,
+      namaIbu: orangtua.namaIbu,
+      noHp: orangtua.noHp,
+      namaLengkap: users.namaLengkap
+    })
       .from(orangtua)
+      .leftJoin(users, eq(orangtua.userId, users.id))
       .where(eq(orangtua.noHp, noHp))
       .limit(1);
       
     if (result.length > 0) {
       return {
         id: result[0].id,
-        namaAyah: result[0].namaAyah,
+        namaAyah: result[0].namaAyah || result[0].namaLengkap,
         namaIbu: result[0].namaIbu,
         noHp: result[0].noHp
       };
