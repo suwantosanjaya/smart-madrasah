@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { toggleStatusStaff, deleteStaff } from "@/app/actions/staffActions";
 import { resetPassword } from "@/app/actions/userActions";
 import { RefreshCcw } from "lucide-react";
+import { EditStaffDialog } from "@/components/admin/EditStaffDialog";
 
 // Dialog/Modal UI Kustom
 function CustomDialog({ isOpen, title, message, onConfirm, onCancel, type = "danger", isLoading = false }) {
@@ -41,10 +42,12 @@ function CustomDialog({ isOpen, title, message, onConfirm, onCancel, type = "dan
   );
 }
 
-export default function StaffTableClient({ daftarStaff, currentUserRole, currentUserId }) {
+export default function StaffTableClient({ daftarStaff, currentUserRole, currentUserId, daftarRoles = [], allowedRolesToCreate = [] }) {
   const router = useRouter();
   const [openDropdownId, setOpenDropdownId] = useState(null);
   const [loadingId, setLoadingId] = useState(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [selectedEditStaff, setSelectedEditStaff] = useState(null);
   
   // Table features state
   const [searchTerm, setSearchTerm] = useState("");
@@ -255,7 +258,7 @@ export default function StaffTableClient({ daftarStaff, currentUserRole, current
 
                                 return (
                                   <>
-                                    <button onClick={() => { setAlertDialog({isOpen:true, title:"Info", message:"Fitur edit staf sedang dikembangkan", type:"info"}); setOpenDropdownId(null); }} className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 flex items-center gap-2 text-slate-700 transition-colors">
+                                    <button onClick={() => { setSelectedEditStaff(item); setEditDialogOpen(true); setOpenDropdownId(null); }} className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 flex items-center gap-2 text-slate-700 transition-colors">
                                       <Edit className="w-4 h-4 text-slate-400" />
                                       <span className="font-medium">Edit Profil</span>
                                     </button>
@@ -340,6 +343,12 @@ export default function StaffTableClient({ daftarStaff, currentUserRole, current
         message={alertDialog.message} 
         onCancel={() => setAlertDialog(prev => ({ ...prev, isOpen: false }))} 
         type={alertDialog.type} 
+      />
+      <EditStaffDialog 
+        open={editDialogOpen} 
+        onOpenChange={setEditDialogOpen} 
+        staff={selectedEditStaff} 
+        daftarRoles={daftarRoles.filter(r => allowedRolesToCreate.includes(r.namaRole))}
       />
     </div>
   );

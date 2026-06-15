@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { users, roles, userRoles, guru } from "@/lib/db/schema";
-import { eq, or, desc, and } from "drizzle-orm";
+import { eq, or, desc, and, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { hash } from "bcryptjs";
 
@@ -94,5 +94,58 @@ export async function deleteStaff(userId) {
   } catch (error) {
     console.error("Error deleting staff:", error);
     return { success: false, error: "Gagal menghapus akun staf" };
+  }
+}
+
+// Update Profil Staff
+export async function updateStaff(userId, formData) {
+  try {
+    const namaLengkap = formData.get("namaLengkap");
+    const email = formData.get("email");
+    const roleId = parseInt(formData.get("roleId"));
+    const nip = formData.get("nip") || null;
+    const noHp = formData.get("noHp") || null;
+    
+    // Cek apakah email sudah terdaftar untuk user lain
+    const existingUser = await db.select().from(users).where(and(eq(users.email, email), sql`${users.id} != ${userId}`)).limit(1);
+    if (existingUser.length > 0) {
+      return { success: false, error: "Email sudah digunakan oleh akun lain!" };
+    }
+    
+    // Update User
+    await db.update(users).set({
+      namaLengkap,
+      email,
+    }).where(eq(users.id, userId));
+    
+    // Update Role
+    await db.delete(userRoles).where(eq(userRoles.userId, userId));
+    await db.insert(userRoles).values({
+      userId: userId,
+      roleId: roleId,
+    });
+    
+    // Cek apakah role yang dipilih butuh tabel guru
+    const selectedRole = await db.select().from(roles).where(eq(roles.id, roleId)).limit(1);
+    const allowedRolesForWaliKelas = ["guru", "kepala_madrasah"];
+    const isTeacherRole = selectedRole.length > 0 && allowedRolesForWaliKelas.includes(selectedRole[0].namaRole);
+    
+    if (isTeacherRole) {
+      const existingGuru = await db.select().from(guru).where(eq(guru.userId, userId)).limit(1);
+      if (existingGuru.length > 0) {
+        await db.update(guru).set({ nip, noHp }).where(eq(guru.userId, userId));
+      } else {
+        await db.insert(guru).values({ userId, nip, noHp });
+      }
+    } else {
+      // Jika diubah menjadi admin/role lain yang tidak perlu data guru, kita bisa hapus dari tabel guru (opsional)
+      // await db.delete(guru).where(eq(guru.userId, userId));
+    }
+    
+    revalidatePath("/dashboard/admin/staff");
+    return { success: true, message: "Profil staf berhasil diperbarui!" };
+  } catch (error) {
+    console.error("Error updating staff:", error);
+    return { success: false, error: "Terjadi kesalahan pada server" };
   }
 }

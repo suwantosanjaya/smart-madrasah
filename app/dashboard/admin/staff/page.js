@@ -108,7 +108,7 @@ export default async function AdminStaffPage() {
         <CreateStaffDialog daftarRoles={daftarRoles.filter(r => allowedRolesToCreate.includes(r.namaRole))} />
       </div>
 
-      <StaffTableClient daftarStaff={staffData} currentUserRole={currentUserRole} currentUserId={session.user.id} />
+      <StaffTableClient daftarStaff={staffData} currentUserRole={currentUserRole} currentUserId={session.user.id} daftarRoles={daftarRoles} allowedRolesToCreate={allowedRolesToCreate} />
     </div>
   );
 }
