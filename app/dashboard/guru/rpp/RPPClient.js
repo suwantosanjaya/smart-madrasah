@@ -73,6 +73,11 @@ const renderHTML = (content) => {
   return { __html: content.replace(/\n/g, '<br/>') };
 };
 
+const stripHtml = (html) => {
+  if (!html) return "";
+  return html.replace(/<[^>]*>?/gm, '');
+};
+
 export default function RPPClient({ initialData, initialMapel }) {
   const [data, setData] = useState(initialData || []);
   const [isPending, startTransition] = useTransition();
@@ -433,7 +438,7 @@ export default function RPPClient({ initialData, initialMapel }) {
                             </Badge>
                           ) : null}
                         </div>
-                        <p className="text-sm text-slate-500 line-clamp-1 mb-2">Tujuan: {rpp.tujuan}</p>
+                        <p className="text-sm text-slate-500 line-clamp-1 mb-2">Tujuan: {stripHtml(rpp.tujuan)}</p>
                         <div className="flex items-center gap-2 flex-wrap mt-2">
                           <Badge variant="outline">{rpp.mapel}</Badge>
                           <Badge variant="secondary">{rpp.tingkat} - Smt {rpp.semester}</Badge>
