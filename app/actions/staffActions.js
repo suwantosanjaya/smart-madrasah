@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { users, roles, userRoles, guru } from "@/lib/db/schema";
+import { users, roles, userRoles, guru, orangtua } from "@/lib/db/schema";
 import { eq, or, desc, and, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { hash } from "bcryptjs";
@@ -61,6 +61,21 @@ export async function createStaff(formData) {
         noHp,
         // Set default values untuk kolom lainnya jika diperlukan
       });
+    }
+
+    const isOrangTua = formData.get("isOrangTua") === "true";
+    if (isOrangTua) {
+      const [ortuRole] = await db.select().from(roles).where(eq(roles.namaRole, "orangtua")).limit(1);
+      if (ortuRole) {
+        await db.insert(userRoles).values({
+          userId: newUser.id,
+          roleId: ortuRole.id,
+        });
+        await db.insert(orangtua).values({
+          userId: newUser.id,
+          noHp: noHp || null,
+        });
+      }
     }
     
     revalidatePath("/dashboard/admin/staff");
@@ -158,6 +173,25 @@ export async function updateStaff(userId, formData) {
     } else {
       // Jika diubah menjadi admin/role lain yang tidak perlu data guru, kita bisa hapus dari tabel guru (opsional)
       // await db.delete(guru).where(eq(guru.userId, userId));
+    }
+
+    const isOrangTua = formData.get("isOrangTua") === "true";
+    const [ortuRole] = await db.select().from(roles).where(eq(roles.namaRole, "orangtua")).limit(1);
+    if (ortuRole) {
+      if (isOrangTua) {
+        const existingOrtuRole = await db.select().from(userRoles).where(and(eq(userRoles.userId, userId), eq(userRoles.roleId, ortuRole.id))).limit(1);
+        if (existingOrtuRole.length === 0) {
+          await db.insert(userRoles).values({ userId, roleId: ortuRole.id });
+        }
+        const existingOrtu = await db.select().from(orangtua).where(eq(orangtua.userId, userId)).limit(1);
+        if (existingOrtu.length === 0) {
+          await db.insert(orangtua).values({ userId, noHp: noHp || null });
+        } else {
+          await db.update(orangtua).set({ noHp: noHp || null }).where(eq(orangtua.userId, userId));
+        }
+      } else {
+        await db.delete(userRoles).where(and(eq(userRoles.userId, userId), eq(userRoles.roleId, ortuRole.id)));
+      }
     }
     
     revalidatePath("/dashboard/admin/staff");

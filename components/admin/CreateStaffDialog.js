@@ -141,6 +141,19 @@ export function CreateStaffDialog({ daftarRoles = [] }) {
                                 </div>
                             </>
                         )}
+                        
+                        <div className="flex items-center gap-3 mt-4 pt-4 border-t border-slate-100">
+                            <input 
+                                type="checkbox" 
+                                id="isOrangTua" 
+                                name="isOrangTua" 
+                                value="true"
+                                className="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500" 
+                            />
+                            <Label htmlFor="isOrangTua" className="text-sm font-medium text-slate-700 cursor-pointer">
+                                Pengguna ini sekaligus merupakan Orang Tua / Wali Murid
+                            </Label>
+                        </div>
 
                         {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
                         {success && <p className="text-emerald-600 text-sm mt-2 font-medium">{success}</p>}
