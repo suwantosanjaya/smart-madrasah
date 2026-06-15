@@ -27,7 +27,7 @@ import { createRpp, updateRpp, deleteRpp, updateRppStatus } from "@/app/actions/
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-const ReactQuill = dynamic(() => import("react-quill"), { 
+const ReactQuill = dynamic(() => import("react-quill-new"), { 
   ssr: false, 
   loading: () => <div className="h-24 bg-slate-50 animate-pulse rounded-md border border-slate-200" /> 
 });
