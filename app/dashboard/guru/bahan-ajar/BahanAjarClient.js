@@ -255,7 +255,7 @@ export default function BahanAjarClient({ initialData, mapelData, rppData }) {
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
                 <DialogTitle className="text-red-600">Peringatan</DialogTitle>
-                <DialogDescription className="text-slate-700 py-2">
+                <DialogDescription className="text-slate-700 py-2 break-words max-h-[60vh] overflow-y-auto">
                   {errorMessage}
                 </DialogDescription>
               </DialogHeader>
