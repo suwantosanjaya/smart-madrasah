@@ -234,7 +234,7 @@ export default function BahanAjarClient({ initialData, mapelData, rppData }) {
 
       {/* Form Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingItem ? "Edit Bahan Ajar" : "Tambah Bahan Ajar"}</DialogTitle>
             <DialogDescription>Isi detail bahan ajar dan tautkan ke RPP terkait.</DialogDescription>
@@ -344,7 +344,7 @@ export default function BahanAjarClient({ initialData, mapelData, rppData }) {
             )}
 
           </div>
-          <DialogFooter>
+          <DialogFooter className="sticky -bottom-6 bg-white pt-4 pb-6 -mx-6 px-6 border-t mt-6 z-10">
             <Button variant="outline" onClick={() => setIsModalOpen(false)}>Batal</Button>
             <Button onClick={handleSave} disabled={isPending}>{isPending ? "Menyimpan..." : "Simpan"}</Button>
           </DialogFooter>
