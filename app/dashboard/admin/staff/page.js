@@ -60,11 +60,21 @@ export default async function AdminStaffPage() {
 
   // Group by user ID to prevent duplicate rows if a user has multiple roles
   const userMap = new Map();
+  const staffRolesForPrimary = ["super_admin", "admin", "kepala_madrasah", "guru"];
+  
   for (const staff of staffQuery) {
     if (!userMap.has(staff.id)) {
       userMap.set(staff.id, { ...staff, allRoles: [staff.labelRole], roleKeys: [staff.namaRole] });
     } else {
       const existing = userMap.get(staff.id);
+      
+      // Prioritaskan roleId utama adalah role staff (bukan orangtua)
+      if (!staffRolesForPrimary.includes(existing.namaRole) && staffRolesForPrimary.includes(staff.namaRole)) {
+        existing.roleId = staff.roleId;
+        existing.namaRole = staff.namaRole;
+        existing.labelRole = staff.labelRole;
+      }
+      
       if (!existing.allRoles.includes(staff.labelRole)) {
         existing.allRoles.push(staff.labelRole);
         existing.roleKeys.push(staff.namaRole);

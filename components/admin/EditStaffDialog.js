@@ -66,6 +66,7 @@ export function EditStaffDialog({ open, onOpenChange, staff, daftarRoles = [] })
 
     const selectedRoleData = daftarRoles.find(r => r.id.toString() === selectedRole)
     const isTeacherRole = selectedRoleData && ['guru', 'kepala_madrasah'].includes(selectedRoleData.namaRole)
+    const showAdditionalDetails = isTeacherRole || isOrangTua;
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -128,23 +129,25 @@ export function EditStaffDialog({ open, onOpenChange, staff, daftarRoles = [] })
                             </select>
                         </div>
 
-                        {/* Tampilkan kolom tambahan jika role adalah Guru atau Kepala Madrasah */}
-                        {isTeacherRole && (
+                        {/* Tampilkan kolom tambahan jika role adalah Guru/Kepala Madrasah ATAU jika isOrangTua dicentang */}
+                        {showAdditionalDetails && (
                             <>
                                 <div className="text-sm font-bold text-slate-800 border-b pb-2 mt-4">Detail Tambahan</div>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="nip" className="text-right">
-                                        NIP / NUPTK
-                                    </Label>
-                                    <Input
-                                        id="nip"
-                                        name="nip"
-                                        value={nip}
-                                        onChange={(e) => setNip(e.target.value)}
-                                        placeholder="198001012010011001"
-                                        className="col-span-3"
-                                    />
-                                </div>
+                                {isTeacherRole && (
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label htmlFor="nip" className="text-right">
+                                            NIP / NUPTK
+                                        </Label>
+                                        <Input
+                                            id="nip"
+                                            name="nip"
+                                            value={nip}
+                                            onChange={(e) => setNip(e.target.value)}
+                                            placeholder="198001012010011001"
+                                            className="col-span-3"
+                                        />
+                                    </div>
+                                )}
                                 <div className="grid grid-cols-4 items-center gap-4">
                                     <Label htmlFor="noHp" className="text-right">
                                         No. WhatsApp
