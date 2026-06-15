@@ -88,6 +88,8 @@ const stripHtml = (html) => {
   return text.replace(/\s+/g, ' ').trim();
 };
 
+const printHtmlClass = "pl-2 [&_ol]:list-decimal [&_ul]:list-disc [&_ol]:ml-5 [&_ul]:ml-5 [&_li]:mb-1 [&_p]:mb-1.5 [&_ol_ol]:list-[lower-alpha] [&_ul_ul]:list-[circle] [&_ol_ol]:ml-5 [&_ul_ul]:ml-5";
+
 export default function RPPClient({ initialData, initialMapel }) {
   const [data, setData] = useState(initialData || []);
   const [isPending, startTransition] = useTransition();
@@ -313,7 +315,7 @@ export default function RPPClient({ initialData, initialMapel }) {
             <div className="space-y-6 text-[15px] leading-relaxed">
               <div>
                 <h2 className="font-bold mb-2">A. Tujuan Pembelajaran</h2>
-                <div className="pl-4 ql-editor" style={{ padding: 0 }} dangerouslySetInnerHTML={renderHTML(printData.tujuan)} />
+                <div className={printHtmlClass} dangerouslySetInnerHTML={renderHTML(printData.tujuan)} />
               </div>
               
               <div>
@@ -321,22 +323,22 @@ export default function RPPClient({ initialData, initialMapel }) {
                 <div className="pl-4 space-y-4">
                   <div>
                     <h3 className="font-semibold italic mb-1">1. Pendahuluan</h3>
-                    <div className="pl-4 ql-editor" style={{ padding: 0 }} dangerouslySetInnerHTML={renderHTML(printData.pendahuluan)} />
+                    <div className={printHtmlClass} dangerouslySetInnerHTML={renderHTML(printData.pendahuluan)} />
                   </div>
                   <div>
                     <h3 className="font-semibold italic mb-1">2. Kegiatan Inti</h3>
-                    <div className="pl-4 ql-editor" style={{ padding: 0 }} dangerouslySetInnerHTML={renderHTML(printData.inti)} />
+                    <div className={printHtmlClass} dangerouslySetInnerHTML={renderHTML(printData.inti)} />
                   </div>
                   <div>
                     <h3 className="font-semibold italic mb-1">3. Penutup</h3>
-                    <div className="pl-4 ql-editor" style={{ padding: 0 }} dangerouslySetInnerHTML={renderHTML(printData.penutup)} />
+                    <div className={printHtmlClass} dangerouslySetInnerHTML={renderHTML(printData.penutup)} />
                   </div>
                 </div>
               </div>
 
               <div>
                 <h2 className="font-bold mb-2">C. Penilaian Pembelajaran (Asesmen)</h2>
-                <div className="pl-4 ql-editor" style={{ padding: 0 }} dangerouslySetInnerHTML={renderHTML(printData.penilaian)} />
+                <div className={printHtmlClass} dangerouslySetInnerHTML={renderHTML(printData.penilaian)} />
               </div>
             </div>
 
