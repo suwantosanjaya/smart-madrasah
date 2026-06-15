@@ -50,9 +50,10 @@ export async function createStaff(formData) {
     
     // Cek apakah role yang dipilih adalah "guru"
     const selectedRole = await db.select().from(roles).where(eq(roles.id, roleId)).limit(1);
-    const isGuru = selectedRole.length > 0 && selectedRole[0].namaRole === "guru";
+    const allowedRolesForWaliKelas = ["guru", "kepala_madrasah"];
+    const isTeacherRole = selectedRole.length > 0 && allowedRolesForWaliKelas.includes(selectedRole[0].namaRole);
     
-    if (isGuru) {
+    if (isTeacherRole) {
       // Insert ke tabel guru
       await db.insert(guru).values({
         userId: newUser.id,
