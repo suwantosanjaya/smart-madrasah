@@ -72,9 +72,9 @@ Berikan output murni dalam format JSON yang tepat dan bisa di-parse (tanpa tag m
   } catch (error) {
     console.error("Gemini Error:", error);
     
-    let errorMessage = "Gagal men-generate RPP dari AI: " + error.message;
-    if (error.message.includes("503 Service Unavailable") || error.message.includes("high demand")) {
-      errorMessage = "Server AI Google Gemini sedang sangat sibuk karena permintaan yang tinggi (Overload). Silakan tunggu beberapa detik dan coba klik tombol 'AI Generate' lagi.";
+    let errorMessage = "Terjadi kesalahan pada server AI Google Gemini. Silakan coba beberapa saat lagi.";
+    if (error.message.includes("429") || error.message.includes("quota")) {
+      errorMessage = "Kuota API Gemini Anda telah habis untuk saat ini. Silakan tunggu beberapa menit dan coba lagi.";
     }
 
     return NextResponse.json(
