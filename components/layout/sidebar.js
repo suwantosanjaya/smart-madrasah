@@ -81,7 +81,7 @@ export const menuConfig = {
     items: [
       { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
       { href: "/dashboard/guru/jadwal", icon: CalendarDays, label: "Jadwal Mengajar" },
-      { href: "/dashboard/guru/rpp", icon: FileText, label: "RPP / Modul Ajar" },
+      { href: "/dashboard/guru/rpp", icon: FileText, label: "RPP" },
       { href: "/dashboard/guru/bahan-ajar", icon: BookOpen, label: "Bahan Ajar" },
       { href: "/dashboard/guru/evaluasi", icon: ClipboardCheck, label: "Evaluasi" },
       { href: "/dashboard/guru/absensi", icon: ListChecks, label: "Absensi" },
