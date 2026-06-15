@@ -241,6 +241,23 @@ export default function RPPClient({ initialData, initialMapel }) {
           
           {/* A4 Paper Container */}
           <div className="bg-white p-8 sm:p-12 sm:pt-16 shadow-xl print:shadow-none print:p-0 min-h-[297mm]">
+            
+            {/* Kop Surat */}
+            <div className="flex items-center border-b-4 border-double border-slate-900 pb-4 mb-6">
+              <div className="w-24 h-24 flex-shrink-0 flex items-center justify-center">
+                {/* Logo Placeholder */}
+                <div className="w-20 h-20 rounded-full border-2 border-slate-800 flex items-center justify-center">
+                  <GraduationCap className="w-10 h-10 text-slate-800" />
+                </div>
+              </div>
+              <div className="flex-1 text-center pr-24">
+                <h3 className="text-lg font-bold uppercase tracking-wider">Kementerian Agama Republik Indonesia</h3>
+                <h2 className="text-2xl font-extrabold uppercase mt-1 mb-1">MI Tahfizh Cendekia Pekanbaru</h2>
+                <p className="text-sm">Jl. Pendidikan No. 123, Kota Pekanbaru, Riau 28292</p>
+                <p className="text-sm">Email: info@mitahfizhcendekia.sch.id | Telp: (0761) 1234567</p>
+              </div>
+            </div>
+
             <h1 className="text-xl font-bold text-center underline mb-8 uppercase">RENCANA PELAKSANAAN PEMBELAJARAN (RPP)</h1>
             
             <table className="w-full mb-8 text-[15px]">
