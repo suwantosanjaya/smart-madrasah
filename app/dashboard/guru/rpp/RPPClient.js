@@ -225,7 +225,7 @@ export default function RPPClient({ initialData, initialMapel }) {
 
   if (printData) {
     return (
-      <div className="bg-slate-100 min-h-screen -m-4 sm:-m-8 p-4 sm:p-8 font-serif text-black relative z-50">
+      <div className="bg-slate-100 min-h-screen -m-4 sm:-m-8 p-4 sm:p-8 font-serif text-black relative z-50 print:bg-white print:m-0 print:p-0">
         <div className="max-w-4xl mx-auto">
           {/* Controls */}
           <div className="flex justify-between items-center mb-6 print:hidden bg-white p-4 rounded-lg shadow-sm border border-slate-200">
