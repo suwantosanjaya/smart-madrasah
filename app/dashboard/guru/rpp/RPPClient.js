@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { useEffect, useTransition } from "react";
 import dynamic from "next/dynamic";
-import "react-quill/dist/quill.snow.css";
+import "react-quill-new/dist/quill.snow.css";
 import { createRpp, updateRpp, deleteRpp, updateRppStatus } from "@/app/actions/rpp";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
