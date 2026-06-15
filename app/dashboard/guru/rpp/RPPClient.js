@@ -344,7 +344,7 @@ export default function RPPClient({ initialData, initialMapel }) {
               </div>
             </div>
 
-            <div className="mt-16 flex justify-between">
+            <div className="mt-16 flex justify-between break-inside-avoid">
               <div className="text-center w-64">
                 <p>Mengetahui,</p>
                 <p>Kepala Madrasah</p>
