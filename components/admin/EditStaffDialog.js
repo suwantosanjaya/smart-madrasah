@@ -150,7 +150,7 @@ export function EditStaffDialog({ open, onOpenChange, staff, daftarRoles = [] })
                                 )}
                                 <div className="grid grid-cols-4 items-center gap-4">
                                     <Label htmlFor="noHp" className="text-right">
-                                        No. WhatsApp
+                                        No. HP
                                     </Label>
                                     <Input
                                         id="noHp"
