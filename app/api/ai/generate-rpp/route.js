@@ -17,7 +17,7 @@ export async function POST(req) {
 
     // Inisialisasi SDK Gemini dengan API Key
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
 
     // Instruksi Prompt untuk AI
     const prompt = `Anda adalah ahli kurikulum pendidikan di Indonesia (Kurikulum Merdeka). 
