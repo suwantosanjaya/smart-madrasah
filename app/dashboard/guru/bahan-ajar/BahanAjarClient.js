@@ -21,6 +21,16 @@ import "react-quill-new/dist/quill.snow.css";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
+const quillModules = {
+  toolbar: [
+    [{ 'header': [1, 2, 3, false] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+    ['link', 'image'],
+    ['clean']
+  ],
+};
+
 const iconMap = {
   materi: FileText,
   video: Video,
@@ -326,9 +336,10 @@ export default function BahanAjarClient({ initialData, mapelData, rppData }) {
                 </div>
                 <ReactQuill 
                   theme="snow"
+                  modules={quillModules}
                   value={formData.konten}
                   onChange={(val) => setFormData(prev => ({...prev, konten: val}))}
-                  placeholder="Tuliskan materi pembelajaran di sini..."
+                  placeholder="Tuliskan materi pembelajaran di sini... (Gunakan tombol gambar di atas untuk menyisipkan foto)"
                   className="bg-white rounded-lg [&_.ql-editor]:min-h-[200px]"
                 />
               </div>
