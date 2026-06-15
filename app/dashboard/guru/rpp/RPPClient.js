@@ -18,6 +18,7 @@ import {
   Loader2,
   Printer,
   ChevronLeft,
+  GraduationCap,
 } from "lucide-react";
 import { useEffect, useTransition } from "react";
 import { createRpp, updateRpp, deleteRpp, updateRppStatus } from "@/app/actions/rpp";
