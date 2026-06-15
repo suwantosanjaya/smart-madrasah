@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { profilMadrasah } from "@/lib/db/schema";
+import { madrasah } from "@/lib/db/schema";
 import LoginClient from "./LoginClient";
 
 export const metadata = {
@@ -8,6 +8,6 @@ export const metadata = {
 };
 
 export default async function LoginPage() {
-  const [profil] = await db.select().from(profilMadrasah).limit(1);
+  const [profil] = await db.select().from(madrasah).limit(1);
   return <LoginClient profil={profil} />;
 }
