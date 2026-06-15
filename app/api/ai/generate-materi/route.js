@@ -26,11 +26,12 @@ Materi ajar ini harus merujuk 100% pada konteks Rencana Pelaksanaan Pembelajaran
 - Kegiatan Inti RPP: ${rppInti}
 
 Syarat Penulisan:
-1. Gunakan gaya bahasa yang interaktif, seolah-olah Anda sedang menyapa dan berdialog dengan siswa (misal: "Halo anak-anak hebat!").
-2. Jelaskan konsep materi secara terstruktur. Gunakan analogi atau contoh kehidupan sehari-hari jika perlu.
-3. Berikan penekanan (Bold) pada kata-kata kunci penting.
-4. Akhiri modul dengan 3 soal pertanyaan pemahaman singkat (Latihan Mandiri).
-5. Berikan output murni dalam format HTML yang valid (gunakan <h1>, <h2>, <p>, <ul>, <li>, <strong>, dll.) yang siap untuk dimasukkan ke dalam Rich Text Editor. Jangan bungkus output dengan markdown blok seperti \`\`\`html.
+1. Gunakan gaya bahasa yang interaktif, seolah-olah Anda sedang menyapa dan berdialog dengan siswa (misal: "Halo anak-anak hebat!"). Gunakan banyak Emoji yang relevan untuk membuat teks berwarna dan menyenangkan.
+2. VISUALISASI OTOMATIS: Setiap kali Anda menjelaskan tentang suatu bentuk (misal: bangun datar, bangun ruang, pecahan, dll), Anda WAJIB menggambarkannya menggunakan kode HTML <svg> murni secara langsung. Pastikan <svg> memiliki atribut width, height, viewBox, dan warna fill yang cerah (misal: merah, biru, hijau, kuning pastel). Bungkus <svg> tersebut di dalam <div style="text-align: center; margin: 15px 0;">.
+3. Jelaskan konsep materi secara terstruktur. Gunakan analogi atau contoh kehidupan sehari-hari jika perlu.
+4. Berikan penekanan (Bold) pada kata-kata kunci penting.
+5. Akhiri modul dengan 3 soal pertanyaan pemahaman singkat (Latihan Mandiri).
+6. Berikan output murni dalam format HTML yang valid (gunakan <h1>, <h2>, <p>, <ul>, <li>, <strong>, <svg>, dll.) yang siap untuk dimasukkan ke dalam Rich Text Editor. Jangan bungkus output dengan markdown blok seperti \`\`\`html.
 
 Mulai penulisan modul:`;
 
