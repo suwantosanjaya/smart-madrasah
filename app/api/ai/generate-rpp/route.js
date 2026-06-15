@@ -10,14 +10,15 @@ export async function POST(req) {
     // Pastikan API key tersedia di .env
     if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json(
-        { error: "API Key Gemini belum disetting di server (.env)." },
+        { error: "API Key Gemini belum disetting di server." },
         { status: 500 }
       );
     }
 
     // Inisialisasi SDK Gemini dengan API Key
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+    const modelName = process.env.GEMINI_MODEL_NAME || "gemini-flash-latest";
+    const model = genAI.getGenerativeModel({ model: modelName });
 
     // Instruksi Prompt untuk AI
     const prompt = `Anda adalah ahli kurikulum pendidikan di Indonesia (Kurikulum Merdeka). 
