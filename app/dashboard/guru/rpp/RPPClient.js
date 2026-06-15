@@ -625,15 +625,17 @@ export default function RPPClient({ initialData, initialMapel }) {
 
             <div className="space-y-2">
               <Label className="font-semibold text-slate-800">A. Tujuan Pembelajaran</Label>
-              <ReactQuill 
-                theme="snow"
-                value={formData.tujuan}
-                onChange={(val) => setFormData(prev => ({...prev, tujuan: val}))}
-                placeholder="Setelah mengikuti proses pembelajaran, peserta didik diharapkan dapat..."
-                readOnly={isReadOnly}
-                modules={isReadOnly ? { toolbar: false } : undefined}
-                className={`bg-white rounded-lg [&_.ql-editor]:min-h-[100px] ${isReadOnly ? 'opacity-70 bg-slate-50' : ''}`}
-              />
+              {isReadOnly ? (
+                <div className={`bg-slate-50 border border-slate-200 rounded-lg p-3 min-h-[100px] opacity-80 ${printHtmlClass}`} dangerouslySetInnerHTML={renderHTML(formData.tujuan)} />
+              ) : (
+                <ReactQuill 
+                  theme="snow"
+                  value={formData.tujuan}
+                  onChange={(val) => setFormData(prev => ({...prev, tujuan: val}))}
+                  placeholder="Setelah mengikuti proses pembelajaran, peserta didik diharapkan dapat..."
+                  className="bg-white rounded-lg [&_.ql-editor]:min-h-[100px]"
+                />
+              )}
             </div>
 
             <div className="space-y-3">
@@ -641,54 +643,62 @@ export default function RPPClient({ initialData, initialMapel }) {
               <div className="pl-4 border-l-2 border-emerald-100 space-y-4">
                 <div className="space-y-1">
                   <Label className="text-xs text-slate-500">1. Pendahuluan (Apersepsi, Motivasi)</Label>
-                  <ReactQuill 
-                    theme="snow"
-                    value={formData.pendahuluan}
-                    onChange={(val) => setFormData(prev => ({...prev, pendahuluan: val}))}
-                    placeholder="Contoh: Guru membuka kelas dengan salam..."
-                    readOnly={isReadOnly}
-                    modules={isReadOnly ? { toolbar: false } : undefined}
-                    className={`bg-white rounded-lg [&_.ql-editor]:min-h-[100px] ${isReadOnly ? 'opacity-70 bg-slate-50' : ''}`}
-                  />
+                  {isReadOnly ? (
+                    <div className={`bg-slate-50 border border-slate-200 rounded-lg p-3 min-h-[100px] opacity-80 ${printHtmlClass}`} dangerouslySetInnerHTML={renderHTML(formData.pendahuluan)} />
+                  ) : (
+                    <ReactQuill 
+                      theme="snow"
+                      value={formData.pendahuluan}
+                      onChange={(val) => setFormData(prev => ({...prev, pendahuluan: val}))}
+                      placeholder="Contoh: Guru membuka kelas dengan salam..."
+                      className="bg-white rounded-lg [&_.ql-editor]:min-h-[100px]"
+                    />
+                  )}
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs text-slate-500">2. Kegiatan Inti (Pemberian rangsangan, Pembuktian)</Label>
-                  <ReactQuill 
-                    theme="snow"
-                    value={formData.inti}
-                    onChange={(val) => setFormData(prev => ({...prev, inti: val}))}
-                    placeholder="Contoh: Siswa mengamati video, lalu berdiskusi..."
-                    readOnly={isReadOnly}
-                    modules={isReadOnly ? { toolbar: false } : undefined}
-                    className={`bg-white rounded-lg [&_.ql-editor]:min-h-[150px] ${isReadOnly ? 'opacity-70 bg-slate-50' : ''}`}
-                  />
+                  {isReadOnly ? (
+                    <div className={`bg-slate-50 border border-slate-200 rounded-lg p-3 min-h-[150px] opacity-80 ${printHtmlClass}`} dangerouslySetInnerHTML={renderHTML(formData.inti)} />
+                  ) : (
+                    <ReactQuill 
+                      theme="snow"
+                      value={formData.inti}
+                      onChange={(val) => setFormData(prev => ({...prev, inti: val}))}
+                      placeholder="Contoh: Siswa mengamati video, lalu berdiskusi..."
+                      className="bg-white rounded-lg [&_.ql-editor]:min-h-[150px]"
+                    />
+                  )}
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs text-slate-500">3. Penutup (Refleksi, Tindak Lanjut)</Label>
-                  <ReactQuill 
-                    theme="snow"
-                    value={formData.penutup}
-                    onChange={(val) => setFormData(prev => ({...prev, penutup: val}))}
-                    placeholder="Contoh: Guru bersama siswa menyimpulkan..."
-                    readOnly={isReadOnly}
-                    modules={isReadOnly ? { toolbar: false } : undefined}
-                    className={`bg-white rounded-lg [&_.ql-editor]:min-h-[100px] ${isReadOnly ? 'opacity-70 bg-slate-50' : ''}`}
-                  />
+                  {isReadOnly ? (
+                    <div className={`bg-slate-50 border border-slate-200 rounded-lg p-3 min-h-[100px] opacity-80 ${printHtmlClass}`} dangerouslySetInnerHTML={renderHTML(formData.penutup)} />
+                  ) : (
+                    <ReactQuill 
+                      theme="snow"
+                      value={formData.penutup}
+                      onChange={(val) => setFormData(prev => ({...prev, penutup: val}))}
+                      placeholder="Contoh: Guru bersama siswa menyimpulkan..."
+                      className="bg-white rounded-lg [&_.ql-editor]:min-h-[100px]"
+                    />
+                  )}
                 </div>
               </div>
             </div>
 
             <div className="space-y-2">
               <Label className="font-semibold text-slate-800">C. Penilaian Pembelajaran (Asesmen)</Label>
-              <ReactQuill 
-                theme="snow"
-                value={formData.penilaian}
-                onChange={(val) => setFormData(prev => ({...prev, penilaian: val}))}
-                placeholder="Contoh: Sikap (Observasi), Pengetahuan (Tes Tertulis), Keterampilan (Unjuk Kerja)"
-                readOnly={isReadOnly}
-                modules={isReadOnly ? { toolbar: false } : undefined}
-                className={`bg-white rounded-lg [&_.ql-editor]:min-h-[100px] ${isReadOnly ? 'opacity-70 bg-slate-50' : ''}`}
-              />
+              {isReadOnly ? (
+                <div className={`bg-slate-50 border border-slate-200 rounded-lg p-3 min-h-[100px] opacity-80 ${printHtmlClass}`} dangerouslySetInnerHTML={renderHTML(formData.penilaian)} />
+              ) : (
+                <ReactQuill 
+                  theme="snow"
+                  value={formData.penilaian}
+                  onChange={(val) => setFormData(prev => ({...prev, penilaian: val}))}
+                  placeholder="Contoh: Sikap (Observasi), Pengetahuan (Tes Tertulis), Keterampilan (Unjuk Kerja)"
+                  className="bg-white rounded-lg [&_.ql-editor]:min-h-[100px]"
+                />
+              )}
             </div>
 
           </div>
