@@ -542,6 +542,8 @@ export default function RPPClient({ initialData, initialMapel }) {
                   value={formData.judul} 
                   onChange={(e) => setFormData({...formData, judul: e.target.value})} 
                   placeholder="Misal: Teks Deskripsi"
+                  disabled={isReadOnly}
+                  readOnly={isReadOnly}
                 />
               </div>
               <div className="space-y-2">
@@ -565,7 +567,8 @@ export default function RPPClient({ initialData, initialMapel }) {
                 <select 
                   value={formData.tingkat}
                   onChange={(e) => setFormData({...formData, tingkat: e.target.value})}
-                  className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:border-emerald-500 transition-all duration-200"
+                  disabled={isReadOnly}
+                  className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:border-emerald-500 transition-all duration-200 disabled:opacity-50 disabled:bg-slate-50"
                 >
                   <option value="Kelas 1 (Fase A)">Kelas 1 (Fase A)</option>
                   <option value="Kelas 2 (Fase A)">Kelas 2 (Fase A)</option>
@@ -580,7 +583,8 @@ export default function RPPClient({ initialData, initialMapel }) {
                 <select 
                   value={formData.semester}
                   onChange={(e) => setFormData({...formData, semester: e.target.value})}
-                  className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:border-emerald-500 transition-all duration-200"
+                  disabled={isReadOnly}
+                  className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:border-emerald-500 transition-all duration-200 disabled:opacity-50 disabled:bg-slate-50"
                 >
                   <option value="Ganjil">Ganjil</option>
                   <option value="Genap">Genap</option>
@@ -592,6 +596,8 @@ export default function RPPClient({ initialData, initialMapel }) {
                   value={formData.alokasiWaktu} 
                   onChange={(e) => setFormData({...formData, alokasiWaktu: e.target.value})} 
                   placeholder="Misal: 2 x 35 Menit"
+                  disabled={isReadOnly}
+                  readOnly={isReadOnly}
                 />
               </div>
             </div>
@@ -602,7 +608,8 @@ export default function RPPClient({ initialData, initialMapel }) {
                 <select 
                   value={formData.targetKognitif}
                   onChange={(e) => setFormData({...formData, targetKognitif: e.target.value})}
-                  className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:border-emerald-500 transition-all duration-200"
+                  disabled={isReadOnly}
+                  className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:border-emerald-500 transition-all duration-200 disabled:opacity-50 disabled:bg-slate-50"
                 >
                   <option value="C1 - Mengingat">C1 - Mengingat (LOTS)</option>
                   <option value="C2 - Memahami">C2 - Memahami (LOTS)</option>
@@ -623,7 +630,9 @@ export default function RPPClient({ initialData, initialMapel }) {
                 value={formData.tujuan}
                 onChange={(val) => setFormData(prev => ({...prev, tujuan: val}))}
                 placeholder="Setelah mengikuti proses pembelajaran, peserta didik diharapkan dapat..."
-                className="bg-white rounded-lg [&_.ql-editor]:min-h-[100px]"
+                readOnly={isReadOnly}
+                modules={isReadOnly ? { toolbar: false } : undefined}
+                className={`bg-white rounded-lg [&_.ql-editor]:min-h-[100px] ${isReadOnly ? 'opacity-70 bg-slate-50' : ''}`}
               />
             </div>
 
@@ -637,7 +646,9 @@ export default function RPPClient({ initialData, initialMapel }) {
                     value={formData.pendahuluan}
                     onChange={(val) => setFormData(prev => ({...prev, pendahuluan: val}))}
                     placeholder="Contoh: Guru membuka kelas dengan salam..."
-                    className="bg-white rounded-lg [&_.ql-editor]:min-h-[100px]"
+                    readOnly={isReadOnly}
+                    modules={isReadOnly ? { toolbar: false } : undefined}
+                    className={`bg-white rounded-lg [&_.ql-editor]:min-h-[100px] ${isReadOnly ? 'opacity-70 bg-slate-50' : ''}`}
                   />
                 </div>
                 <div className="space-y-1">
@@ -647,7 +658,9 @@ export default function RPPClient({ initialData, initialMapel }) {
                     value={formData.inti}
                     onChange={(val) => setFormData(prev => ({...prev, inti: val}))}
                     placeholder="Contoh: Siswa mengamati video, lalu berdiskusi..."
-                    className="bg-white rounded-lg [&_.ql-editor]:min-h-[150px]"
+                    readOnly={isReadOnly}
+                    modules={isReadOnly ? { toolbar: false } : undefined}
+                    className={`bg-white rounded-lg [&_.ql-editor]:min-h-[150px] ${isReadOnly ? 'opacity-70 bg-slate-50' : ''}`}
                   />
                 </div>
                 <div className="space-y-1">
@@ -657,7 +670,9 @@ export default function RPPClient({ initialData, initialMapel }) {
                     value={formData.penutup}
                     onChange={(val) => setFormData(prev => ({...prev, penutup: val}))}
                     placeholder="Contoh: Guru bersama siswa menyimpulkan..."
-                    className="bg-white rounded-lg [&_.ql-editor]:min-h-[100px]"
+                    readOnly={isReadOnly}
+                    modules={isReadOnly ? { toolbar: false } : undefined}
+                    className={`bg-white rounded-lg [&_.ql-editor]:min-h-[100px] ${isReadOnly ? 'opacity-70 bg-slate-50' : ''}`}
                   />
                 </div>
               </div>
@@ -670,7 +685,9 @@ export default function RPPClient({ initialData, initialMapel }) {
                 value={formData.penilaian}
                 onChange={(val) => setFormData(prev => ({...prev, penilaian: val}))}
                 placeholder="Contoh: Sikap (Observasi), Pengetahuan (Tes Tertulis), Keterampilan (Unjuk Kerja)"
-                className="bg-white rounded-lg [&_.ql-editor]:min-h-[100px]"
+                readOnly={isReadOnly}
+                modules={isReadOnly ? { toolbar: false } : undefined}
+                className={`bg-white rounded-lg [&_.ql-editor]:min-h-[100px] ${isReadOnly ? 'opacity-70 bg-slate-50' : ''}`}
               />
             </div>
 
