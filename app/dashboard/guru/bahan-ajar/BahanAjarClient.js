@@ -37,6 +37,8 @@ export default function BahanAjarClient({ initialData, mapelData, rppData }) {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [formData, setFormData] = useState({
     judul: "",
@@ -99,6 +101,51 @@ export default function BahanAjarClient({ initialData, mapelData, rppData }) {
       });
     }
     setIsModalOpen(false);
+  };
+
+  const handleAIGenerateKonten = async () => {
+    if (!formData.rppId || !formData.judul) {
+      setErrorMessage("Judul Materi dan Tautan RPP harus diisi untuk menggunakan AI.");
+      return;
+    }
+
+    setIsLoadingAI(true);
+    setErrorMessage("");
+
+    try {
+      const selectedRpp = rppData.find(r => r.id == formData.rppId);
+      if (!selectedRpp) {
+        setErrorMessage("Data RPP tidak ditemukan.");
+        setIsLoadingAI(false);
+        return;
+      }
+
+      const res = await fetch("/api/ai/generate-materi", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          judulMateri: formData.judul,
+          rppJudul: selectedRpp.judul,
+          rppTujuan: selectedRpp.tujuan,
+          rppInti: selectedRpp.inti
+        }),
+      });
+
+      const aiData = await res.json();
+
+      if (res.ok) {
+        setFormData(prev => ({
+          ...prev,
+          konten: aiData.konten || prev.konten,
+        }));
+      } else {
+        setErrorMessage("Gagal men-generate Bahan Ajar: " + aiData.error);
+      }
+    } catch (error) {
+      setErrorMessage("Terjadi kesalahan sistem saat menghubungi AI.");
+    } finally {
+      setIsLoadingAI(false);
+    }
   };
 
   const handleOpenDelete = (id) => {
@@ -192,6 +239,22 @@ export default function BahanAjarClient({ initialData, mapelData, rppData }) {
             <DialogTitle>{editingItem ? "Edit Bahan Ajar" : "Tambah Bahan Ajar"}</DialogTitle>
             <DialogDescription>Isi detail bahan ajar dan tautkan ke RPP terkait.</DialogDescription>
           </DialogHeader>
+          
+          {/* Custom Error Banner */}
+          <Dialog open={!!errorMessage} onOpenChange={() => setErrorMessage("")}>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle className="text-red-600">Peringatan</DialogTitle>
+                <DialogDescription className="text-slate-700 py-2">
+                  {errorMessage}
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button onClick={() => setErrorMessage("")} variant="outline">Tutup</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>Judul Materi</Label>
@@ -248,9 +311,16 @@ export default function BahanAjarClient({ initialData, mapelData, rppData }) {
                 <div className="flex items-center justify-between mb-1">
                   <Label>Isi Konten Pembelajaran</Label>
                   {formData.rppId && (
-                    <Button variant="outline" size="sm" type="button" onClick={() => alert('Sistem AI akan membaca RPP dan menghasilkan materi ajar secara otomatis. Anda dapat mengembangkannya menggunakan Gemini API seperti di modul RPP.')} className="h-7 text-[10px] border-amber-200 bg-amber-50 text-amber-600 hover:bg-amber-100">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      type="button" 
+                      onClick={handleAIGenerateKonten}
+                      disabled={isLoadingAI}
+                      className="h-7 text-[10px] border-amber-200 bg-amber-50 text-amber-600 hover:bg-amber-100"
+                    >
                       <Sparkles className="w-3 h-3 mr-1" />
-                      AI Generate dari RPP
+                      {isLoadingAI ? "AI Sedang Berpikir..." : "AI Generate dari RPP"}
                     </Button>
                   )}
                 </div>
