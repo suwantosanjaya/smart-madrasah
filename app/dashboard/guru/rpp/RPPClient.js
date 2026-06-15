@@ -21,9 +21,16 @@ import {
   GraduationCap,
 } from "lucide-react";
 import { useEffect, useTransition } from "react";
+import dynamic from "next/dynamic";
+import "react-quill/dist/quill.snow.css";
 import { createRpp, updateRpp, deleteRpp, updateRppStatus } from "@/app/actions/rpp";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+
+const ReactQuill = dynamic(() => import("react-quill"), { 
+  ssr: false, 
+  loading: () => <div className="h-24 bg-slate-50 animate-pulse rounded-md border border-slate-200" /> 
+});
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -56,6 +63,14 @@ const getTaksonomiLabel = (val) => {
     "C6": "C6 - Mencipta (HOTS)"
   };
   return map[val] || val;
+};
+
+const renderHTML = (content) => {
+  if (!content) return { __html: "" };
+  if (content.includes('<p>') || content.includes('<ul>') || content.includes('<ol>')) {
+    return { __html: content };
+  }
+  return { __html: content.replace(/\n/g, '<br/>') };
 };
 
 export default function RPPClient({ initialData, initialMapel }) {
@@ -282,7 +297,7 @@ export default function RPPClient({ initialData, initialMapel }) {
             <div className="space-y-6 text-[15px] leading-relaxed">
               <div>
                 <h2 className="font-bold mb-2">A. Tujuan Pembelajaran</h2>
-                <div className="pl-4 whitespace-pre-wrap">{printData.tujuan}</div>
+                <div className="pl-4 ql-editor" style={{ padding: 0 }} dangerouslySetInnerHTML={renderHTML(printData.tujuan)} />
               </div>
               
               <div>
@@ -290,22 +305,22 @@ export default function RPPClient({ initialData, initialMapel }) {
                 <div className="pl-4 space-y-4">
                   <div>
                     <h3 className="font-semibold italic mb-1">1. Pendahuluan</h3>
-                    <div className="pl-4 whitespace-pre-wrap">{printData.pendahuluan}</div>
+                    <div className="pl-4 ql-editor" style={{ padding: 0 }} dangerouslySetInnerHTML={renderHTML(printData.pendahuluan)} />
                   </div>
                   <div>
                     <h3 className="font-semibold italic mb-1">2. Kegiatan Inti</h3>
-                    <div className="pl-4 whitespace-pre-wrap">{printData.inti}</div>
+                    <div className="pl-4 ql-editor" style={{ padding: 0 }} dangerouslySetInnerHTML={renderHTML(printData.inti)} />
                   </div>
                   <div>
                     <h3 className="font-semibold italic mb-1">3. Penutup</h3>
-                    <div className="pl-4 whitespace-pre-wrap">{printData.penutup}</div>
+                    <div className="pl-4 ql-editor" style={{ padding: 0 }} dangerouslySetInnerHTML={renderHTML(printData.penutup)} />
                   </div>
                 </div>
               </div>
 
               <div>
                 <h2 className="font-bold mb-2">C. Penilaian Pembelajaran (Asesmen)</h2>
-                <div className="pl-4 whitespace-pre-wrap">{printData.penilaian}</div>
+                <div className="pl-4 ql-editor" style={{ padding: 0 }} dangerouslySetInnerHTML={renderHTML(printData.penilaian)} />
               </div>
             </div>
 
@@ -561,7 +576,7 @@ export default function RPPClient({ initialData, initialMapel }) {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Target Taksonomi Bloom</Label>
                 <select 
@@ -583,42 +598,46 @@ export default function RPPClient({ initialData, initialMapel }) {
 
             <div className="space-y-2">
               <Label className="font-semibold text-slate-800">A. Tujuan Pembelajaran</Label>
-              <textarea 
-                className="flex min-h-[80px] w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 resize-y"
+              <ReactQuill 
+                theme="snow"
                 value={formData.tujuan}
-                onChange={(e) => setFormData({...formData, tujuan: e.target.value})}
+                onChange={(val) => setFormData({...formData, tujuan: val})}
                 placeholder="Setelah mengikuti proses pembelajaran, peserta didik diharapkan dapat..."
+                className="bg-white rounded-lg [&_.ql-editor]:min-h-[100px]"
               />
             </div>
 
             <div className="space-y-3">
               <Label className="font-semibold text-slate-800">B. Kegiatan Pembelajaran</Label>
-              <div className="pl-4 border-l-2 border-emerald-100 space-y-3">
+              <div className="pl-4 border-l-2 border-emerald-100 space-y-4">
                 <div className="space-y-1">
                   <Label className="text-xs text-slate-500">1. Pendahuluan (Apersepsi, Motivasi)</Label>
-                  <textarea 
-                    className="flex min-h-[60px] w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 resize-y"
+                  <ReactQuill 
+                    theme="snow"
                     value={formData.pendahuluan}
-                    onChange={(e) => setFormData({...formData, pendahuluan: e.target.value})}
+                    onChange={(val) => setFormData({...formData, pendahuluan: val})}
                     placeholder="Contoh: Guru membuka kelas dengan salam..."
+                    className="bg-white rounded-lg [&_.ql-editor]:min-h-[100px]"
                   />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs text-slate-500">2. Kegiatan Inti (Pemberian rangsangan, Pembuktian)</Label>
-                  <textarea 
-                    className="flex min-h-[80px] w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 resize-y"
+                  <ReactQuill 
+                    theme="snow"
                     value={formData.inti}
-                    onChange={(e) => setFormData({...formData, inti: e.target.value})}
+                    onChange={(val) => setFormData({...formData, inti: val})}
                     placeholder="Contoh: Siswa mengamati video, lalu berdiskusi..."
+                    className="bg-white rounded-lg [&_.ql-editor]:min-h-[150px]"
                   />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs text-slate-500">3. Penutup (Refleksi, Tindak Lanjut)</Label>
-                  <textarea 
-                    className="flex min-h-[60px] w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 resize-y"
+                  <ReactQuill 
+                    theme="snow"
                     value={formData.penutup}
-                    onChange={(e) => setFormData({...formData, penutup: e.target.value})}
+                    onChange={(val) => setFormData({...formData, penutup: val})}
                     placeholder="Contoh: Guru bersama siswa menyimpulkan..."
+                    className="bg-white rounded-lg [&_.ql-editor]:min-h-[100px]"
                   />
                 </div>
               </div>
@@ -626,11 +645,12 @@ export default function RPPClient({ initialData, initialMapel }) {
 
             <div className="space-y-2">
               <Label className="font-semibold text-slate-800">C. Penilaian Pembelajaran (Asesmen)</Label>
-              <textarea 
-                className="flex min-h-[60px] w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 resize-y"
+              <ReactQuill 
+                theme="snow"
                 value={formData.penilaian}
-                onChange={(e) => setFormData({...formData, penilaian: e.target.value})}
+                onChange={(val) => setFormData({...formData, penilaian: val})}
                 placeholder="Contoh: Sikap (Observasi), Pengetahuan (Tes Tertulis), Keterampilan (Unjuk Kerja)"
+                className="bg-white rounded-lg [&_.ql-editor]:min-h-[100px]"
               />
             </div>
 
