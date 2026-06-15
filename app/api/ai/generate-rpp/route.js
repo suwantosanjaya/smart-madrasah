@@ -28,13 +28,13 @@ Buatlah kerangka Rencana Pelaksanaan Pembelajaran (RPP) / Modul Ajar singkat unt
 - Kelas / Fase: ${tingkat} (Semester ${semester})
 - Target Kognitif Taksonomi Bloom: ${targetKognitif}
 
-Berikan output murni dalam format JSON yang tepat dan bisa di-parse (tanpa tag markdown \`\`\`json). Struktur JSON yang diminta (Gunakan format HTML murni seperti <ul>, <ol>, <li>, <strong>, dll. di dalam nilai setiap kunci untuk *styling* paragraf dan penomoran list):
+Berikan output murni dalam format JSON yang tepat dan bisa di-parse (tanpa tag markdown \`\`\`json). Struktur JSON yang diminta (PENTING: Hanya gunakan tag <ol> dan <li> untuk membuat daftar/list. JANGAN gunakan tag <ul> atau bullet points sama sekali. Gunakan <ol> untuk semua daftar):
 {
-  "tujuan": "Tujuan Pembelajaran secara spesifik (Gunakan HTML)...",
+  "tujuan": "Tujuan Pembelajaran secara spesifik (Gunakan tag <ol> dan <li>)...",
   "pendahuluan": "Langkah-langkah kegiatan pendahuluan (Gunakan tag <ol> dan <li> untuk penomoran)...",
   "inti": "Langkah-langkah kegiatan inti (Gunakan tag <ol> dan <li> untuk penomoran)...",
   "penutup": "Langkah-langkah kegiatan penutup (Gunakan tag <ol> dan <li> untuk penomoran)...",
-  "penilaian": "Teknik dan instrumen penilaian (Gunakan tag <ul> atau <ol>)...",
+  "penilaian": "Teknik dan instrumen penilaian (Gunakan tag <ol> dan <li> untuk penomoran)...",
   "alokasiWaktu": "Contoh: 2 x 40 Menit"
 }`;
 
