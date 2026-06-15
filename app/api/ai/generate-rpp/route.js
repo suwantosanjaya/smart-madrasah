@@ -43,18 +43,30 @@ Berikan output murni dalam format JSON yang tepat dan bisa di-parse (tanpa tag m
     let aiResponseText = result.response.text();
 
     // Hapus backticks markdown jika AI masih menyertakannya (sanitasi)
-    aiResponseText = aiResponseText.replace(/```json/g, "").replace(/```/g, "").trim();
+    aiResponseText = aiResponseText.replace(/```json/g, "").replace(/```html/g, "").replace(/```/g, "").trim();
+    
+    console.log("--- RAW AI RESPONSE ---");
+    console.log(aiResponseText);
 
     // Parsing hasil jawaban JSON AI ke dalam objek JavaScript
-    const rppData = JSON.parse(aiResponseText);
+    const rawRppData = JSON.parse(aiResponseText);
+    
+    // Normalisasi kunci JSON ke huruf kecil untuk menghindari error akibat kapitalisasi dari AI
+    const rppData = {};
+    for (const key in rawRppData) {
+      rppData[key.toLowerCase()] = rawRppData[key];
+    }
+    
+    console.log("--- PARSED JSON ---");
+    console.log(rppData);
 
     return NextResponse.json({
-      tujuan: rppData.tujuan || "",
+      tujuan: rppData.tujuan || rppData.tujuanpembelajaran || "",
       pendahuluan: rppData.pendahuluan || "",
       inti: rppData.inti || "",
       penutup: rppData.penutup || "",
       penilaian: rppData.penilaian || "",
-      alokasiWaktu: rppData.alokasiWaktu || "2 x 40 Menit",
+      alokasiWaktu: rppData.alokasiwaktu || "2 x 40 Menit",
     });
 
   } catch (error) {
