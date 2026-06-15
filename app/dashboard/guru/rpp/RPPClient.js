@@ -702,7 +702,7 @@ export default function RPPClient({ initialData, initialMapel }) {
             </div>
 
           </div>
-          <DialogFooter className="sticky bottom-0 bg-white pt-4 pb-2 border-t mt-4">
+          <DialogFooter className="sticky -bottom-6 bg-white pt-4 pb-6 -mx-6 px-6 border-t mt-6 z-10">
             <Button variant="outline" onClick={() => setIsModalOpen(false)}>Tutup</Button>
             {!isReadOnly && <Button onClick={handleSave} disabled={isPending}>{isPending ? "Menyimpan..." : "Simpan RPP"}</Button>}
           </DialogFooter>
