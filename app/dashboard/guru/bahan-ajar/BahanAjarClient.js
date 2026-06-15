@@ -16,6 +16,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import dynamic from "next/dynamic";
+import "react-quill-new/dist/quill.snow.css";
+
+const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
 const iconMap = {
   materi: FileText,
@@ -39,6 +43,8 @@ export default function BahanAjarClient({ initialData, mapelData, rppData }) {
     jenis: "materi",
     mapelId: mapelData?.[0]?.id || "",
     rppId: "",
+    konten: "",
+    fileUrl: "",
   });
 
   useEffect(() => {
@@ -52,7 +58,7 @@ export default function BahanAjarClient({ initialData, mapelData, rppData }) {
 
   const handleOpenAdd = () => {
     setEditingItem(null);
-    setFormData({ judul: "", jenis: "materi", mapelId: mapelData?.[0]?.id || "", rppId: "" });
+    setFormData({ judul: "", jenis: "materi", mapelId: mapelData?.[0]?.id || "", rppId: "", konten: "", fileUrl: "" });
     setIsModalOpen(true);
   };
 
@@ -63,6 +69,8 @@ export default function BahanAjarClient({ initialData, mapelData, rppData }) {
       jenis: item.jenis,
       mapelId: item.mapelId || "",
       rppId: item.rppId || "",
+      konten: item.konten || "",
+      fileUrl: item.fileUrl || "",
     });
     setIsModalOpen(true);
   };
@@ -232,8 +240,38 @@ export default function BahanAjarClient({ initialData, mapelData, rppData }) {
                   <option key={r.id} value={r.id}>{r.judul}</option>
                 ))}
               </select>
-              <p className="text-xs text-slate-500 mt-1">Pilih RPP agar bahan ajar ini otomatis muncul di Modul Ajar siswa.</p>
+              <p className="text-xs text-slate-500 mt-1">Pilih RPP agar bahan ajar ini otomatis berfokus pada materi tersebut.</p>
             </div>
+
+            {formData.jenis === "materi" ? (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between mb-1">
+                  <Label>Isi Konten Pembelajaran</Label>
+                  {formData.rppId && (
+                    <Button variant="outline" size="sm" type="button" onClick={() => alert('Sistem AI akan membaca RPP dan menghasilkan materi ajar secara otomatis. Anda dapat mengembangkannya menggunakan Gemini API seperti di modul RPP.')} className="h-7 text-[10px] border-amber-200 bg-amber-50 text-amber-600 hover:bg-amber-100">
+                      <Sparkles className="w-3 h-3 mr-1" />
+                      AI Generate dari RPP
+                    </Button>
+                  )}
+                </div>
+                <ReactQuill 
+                  theme="snow"
+                  value={formData.konten}
+                  onChange={(val) => setFormData(prev => ({...prev, konten: val}))}
+                  placeholder="Tuliskan materi pembelajaran di sini..."
+                  className="bg-white rounded-lg [&_.ql-editor]:min-h-[200px]"
+                />
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <Label>{formData.jenis === "video" ? "URL Video (YouTube)" : "URL File (Google Drive / PDF)"}</Label>
+                <Input 
+                  value={formData.fileUrl} 
+                  onChange={(e) => setFormData({...formData, fileUrl: e.target.value})} 
+                  placeholder={formData.jenis === "video" ? "https://youtube.com/watch?v=..." : "https://drive.google.com/..."}
+                />
+              </div>
+            )}
 
           </div>
           <DialogFooter>
