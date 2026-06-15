@@ -75,7 +75,17 @@ const renderHTML = (content) => {
 
 const stripHtml = (html) => {
   if (!html) return "";
-  return html.replace(/<[^>]*>?/gm, '');
+  // Hapus semua tag HTML
+  let text = html.replace(/<[^>]*>?/gm, ' ');
+  // Ubah entitas HTML umum menjadi karakter asli
+  text = text.replace(/&nbsp;/g, ' ')
+             .replace(/&amp;/g, '&')
+             .replace(/&lt;/g, '<')
+             .replace(/&gt;/g, '>')
+             .replace(/&quot;/g, '"')
+             .replace(/&#39;/g, "'");
+  // Hapus spasi ganda
+  return text.replace(/\s+/g, ' ').trim();
 };
 
 export default function RPPClient({ initialData, initialMapel }) {
