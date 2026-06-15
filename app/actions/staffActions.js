@@ -65,6 +65,17 @@ export async function createStaff(formData) {
 
     const isOrangTua = formData.get("isOrangTua") === "true";
     if (isOrangTua) {
+      // VALIDASI: Cek apakah noHp sudah dipakai oleh orang tua lain
+      if (noHp) {
+        const existingHp = await db.select().from(orangtua).where(eq(orangtua.noHp, noHp)).limit(1);
+        if (existingHp.length > 0) {
+          // Kita tidak bisa me-return error biasa karena user sudah telanjur di-insert ke db (di atas).
+          // Pendekatan terbaik: Gagal membuat akun (throw error sebelum commit transaksi)
+          // Tapi karena tidak pakai transaksi, lebih baik kembalikan pesan peringatan spesifik.
+          return { success: false, error: "Staf berhasil dibuat, NAMUN gagal menambahkan peran Orang Tua karena Nomor WhatsApp sudah terdaftar pada akun lain. Silakan edit staf ini secara manual." };
+        }
+      }
+    
       const [ortuRole] = await db.select().from(roles).where(eq(roles.namaRole, "orangtua")).limit(1);
       if (ortuRole) {
         await db.insert(userRoles).values({
@@ -177,8 +188,24 @@ export async function updateStaff(userId, formData) {
 
     const isOrangTua = formData.get("isOrangTua") === "true";
     const [ortuRole] = await db.select().from(roles).where(eq(roles.namaRole, "orangtua")).limit(1);
+    
     if (ortuRole) {
       if (isOrangTua) {
+        // VALIDASI: Cek apakah noHp sudah dipakai oleh orang tua lain
+        if (noHp) {
+          const existingHp = await db.select().from(orangtua).where(
+            and(
+              eq(orangtua.noHp, noHp),
+              sql`${orangtua.userId} IS NOT NULL`,
+              sql`${orangtua.userId} != ${userId}`
+            )
+          ).limit(1);
+          
+          if (existingHp.length > 0) {
+            return { success: false, error: "Nomor WhatsApp ini sudah terdaftar pada akun Orang Tua lain. Silakan periksa kembali!" };
+          }
+        }
+      
         const existingOrtuRole = await db.select().from(userRoles).where(and(eq(userRoles.userId, userId), eq(userRoles.roleId, ortuRole.id))).limit(1);
         if (existingOrtuRole.length === 0) {
           await db.insert(userRoles).values({ userId, roleId: ortuRole.id });
