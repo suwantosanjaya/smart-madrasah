@@ -118,12 +118,30 @@ export async function updateStaff(userId, formData) {
       email,
     }).where(eq(users.id, userId));
     
-    // Update Role
-    await db.delete(userRoles).where(eq(userRoles.userId, userId));
-    await db.insert(userRoles).values({
-      userId: userId,
-      roleId: roleId,
-    });
+    // Update Role, namun pertahankan role "kepala_madrasah" (jangan dihapus jika ada)
+    const kepsekRole = await db.select().from(roles).where(eq(roles.namaRole, 'kepala_madrasah')).limit(1);
+    
+    if (kepsekRole.length > 0) {
+      await db.delete(userRoles).where(
+        and(
+          eq(userRoles.userId, userId),
+          sql`${userRoles.roleId} != ${kepsekRole[0].id}`
+        )
+      );
+    } else {
+      await db.delete(userRoles).where(eq(userRoles.userId, userId));
+    }
+    
+    const existingNewRole = await db.select().from(userRoles).where(
+      and(eq(userRoles.userId, userId), eq(userRoles.roleId, roleId))
+    ).limit(1);
+    
+    if (existingNewRole.length === 0) {
+      await db.insert(userRoles).values({
+        userId: userId,
+        roleId: roleId,
+      });
+    }
     
     // Cek apakah role yang dipilih butuh tabel guru
     const selectedRole = await db.select().from(roles).where(eq(roles.id, roleId)).limit(1);

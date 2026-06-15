@@ -88,8 +88,8 @@ export default async function AdminStaffPage() {
 
   // Jika currentUser adalah admin biasa, jangan tampilkan opsi untuk membuat super_admin atau admin
   const allowedRolesToCreate = currentUserRole === "super_admin" 
-    ? ["super_admin", "admin", "kepala_madrasah", "guru"]
-    : ["kepala_madrasah", "guru"];
+    ? ["super_admin", "admin", "guru"]
+    : ["guru"];
 
   return (
     <div className="p-6">
