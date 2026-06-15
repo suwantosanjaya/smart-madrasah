@@ -67,10 +67,12 @@ const getTaksonomiLabel = (val) => {
 
 const renderHTML = (content) => {
   if (!content) return { __html: "" };
-  if (content.includes('<p>') || content.includes('<ul>') || content.includes('<ol>')) {
-    return { __html: content };
+  // Mengganti &nbsp; dengan spasi biasa agar teks bisa turun ke bawah (word wrap) dengan benar di tampilan Cetak
+  const cleanContent = content.replace(/&nbsp;/g, ' ');
+  if (cleanContent.includes('<p>') || cleanContent.includes('<ul>') || cleanContent.includes('<ol>')) {
+    return { __html: cleanContent };
   }
-  return { __html: content.replace(/\n/g, '<br/>') };
+  return { __html: cleanContent.replace(/\n/g, '<br/>') };
 };
 
 const stripHtml = (html) => {
