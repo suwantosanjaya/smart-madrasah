@@ -94,6 +94,7 @@ export default function RPPClient({ initialData, initialMapel }) {
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [printData, setPrintData] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [formData, setFormData] = useState({
     judul: "",
@@ -166,7 +167,7 @@ export default function RPPClient({ initialData, initialMapel }) {
 
   const handleAIGenerate = async () => {
     if (!formData.judul || !formData.mapelId) {
-      alert("Mohon isi Materi Pokok dan Mata Pelajaran terlebih dahulu agar AI bisa bekerja.");
+      setErrorMessage("Mohon isi Materi Pokok dan Mata Pelajaran terlebih dahulu agar AI bisa bekerja.");
       return;
     }
     
@@ -198,10 +199,10 @@ export default function RPPClient({ initialData, initialMapel }) {
           aiGenerated: true,
         }));
       } else {
-        alert("Gagal men-generate RPP: " + aiData.error);
+        setErrorMessage("Gagal men-generate RPP: " + aiData.error);
       }
     } catch (err) {
-      alert("Terjadi kesalahan sistem saat menghubungi AI.");
+      setErrorMessage("Terjadi kesalahan sistem saat menghubungi AI.");
     } finally {
       setIsGenerating(false);
     }
@@ -354,7 +355,7 @@ export default function RPPClient({ initialData, initialMapel }) {
           <p className="text-slate-500 mt-1">Kelola Rencana Pelaksanaan Pembelajaran Standar Nasional</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => { handleOpenAdd(); alert("Silakan isi Materi Pokok lalu klik tombol 'AI Generate Konten' di dalam form."); }}>
+          <Button variant="outline" size="sm" onClick={() => { handleOpenAdd(); setErrorMessage("Silakan isi Materi Pokok lalu klik tombol 'AI Generate Konten' di dalam form."); }}>
             <Sparkles className="w-4 h-4 mr-1 text-amber-500" /> AI Generate
           </Button>
           <Button size="sm" onClick={handleOpenAdd}>
@@ -673,6 +674,23 @@ export default function RPPClient({ initialData, initialMapel }) {
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDeleteOpen(false)}>Batal</Button>
             <Button variant="destructive" onClick={confirmDelete}>Hapus</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!errorMessage} onOpenChange={(open) => !open && setErrorMessage("")}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center text-amber-600">
+              <AlertCircle className="w-5 h-5 mr-2" />
+              Pemberitahuan
+            </DialogTitle>
+            <DialogDescription className="pt-3 text-slate-700 text-[15px]">
+              {errorMessage}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-4">
+            <Button onClick={() => setErrorMessage("")}>Mengerti</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
