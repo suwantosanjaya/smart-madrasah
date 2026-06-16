@@ -1,19 +1,30 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
+import { db } from "@/lib/db";
+import { pengaturanSistem } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
 export async function POST(req) {
   try {
     const { judulMateri, rppJudul, rppTujuan, rppInti } = await req.json();
 
-    if (!process.env.GEMINI_API_KEY) {
+    // Ambil setting dari database
+    const settings = await db.select().from(pengaturanSistem);
+    const config = {};
+    settings.forEach(s => config[s.kunci] = s.nilai);
+
+    const provider = config["ACTIVE_AI_PROVIDER"] || "gemini";
+    const apiKey = config["GEMINI_API_KEY"] || process.env.GEMINI_API_KEY;
+    const modelName = config["ACTIVE_AI_MODEL"] || process.env.GEMINI_MODEL_NAME || "gemini-pro";
+
+    if (!apiKey) {
       return NextResponse.json(
-        { error: "API Key Gemini belum disetting di server." },
+        { error: "API Key Gemini belum disetting di Pengaturan Sistem." },
         { status: 500 }
       );
     }
 
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const modelName = process.env.GEMINI_MODEL_NAME || "gemini-flash-latest";
+    const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: modelName });
 
     const prompt = `Anda adalah seorang penulis buku teks dan materi ajar profesional untuk tingkat sekolah (Kurikulum Merdeka).
@@ -46,11 +57,11 @@ Mulai penulisan modul:`;
     });
 
   } catch (error) {
-    console.error("Gemini Error:", error);
+    console.error("AI Error:", error);
     
-    let errorMessage = "Terjadi kesalahan pada server AI Google Gemini. Silakan coba beberapa saat lagi.";
+    let errorMessage = "Terjadi kesalahan pada server AI. Silakan coba beberapa saat lagi.";
     if (error.message.includes("429") || error.message.includes("quota")) {
-      errorMessage = "Kuota API Gemini Anda telah habis untuk saat ini. Silakan tunggu beberapa menit dan coba lagi.";
+      errorMessage = "Kuota API AI Anda telah habis untuk saat ini. Silakan tunggu beberapa menit dan coba lagi.";
     }
 
     return NextResponse.json(

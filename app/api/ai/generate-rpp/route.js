@@ -1,23 +1,33 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
+import { db } from "@/lib/db";
+import { pengaturanSistem } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
+
 // akses https://aistudio.google.com/ untuk mendapatkan gemini api key
 
 export async function POST(req) {
   try {
     const { judul, mapel, tingkat, semester, targetKognitif } = await req.json();
 
-    // Pastikan API key tersedia di .env
-    if (!process.env.GEMINI_API_KEY) {
+    // Ambil setting dari database
+    const settings = await db.select().from(pengaturanSistem);
+    const config = {};
+    settings.forEach(s => config[s.kunci] = s.nilai);
+
+    const provider = config["ACTIVE_AI_PROVIDER"] || "gemini";
+    const apiKey = config["GEMINI_API_KEY"] || process.env.GEMINI_API_KEY;
+    const modelName = config["ACTIVE_AI_MODEL"] || process.env.GEMINI_MODEL_NAME || "gemini-pro";
+
+    if (!apiKey) {
       return NextResponse.json(
-        { error: "API Key Gemini belum disetting di server." },
+        { error: "API Key Gemini belum disetting di Pengaturan Sistem." },
         { status: 500 }
       );
     }
 
-    // Inisialisasi SDK Gemini dengan API Key
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const modelName = process.env.GEMINI_MODEL_NAME || "gemini-flash-latest";
+    const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: modelName });
 
     // Instruksi Prompt untuk AI
@@ -70,11 +80,11 @@ Berikan output murni dalam format JSON yang tepat dan bisa di-parse (tanpa tag m
     });
 
   } catch (error) {
-    console.error("Gemini Error:", error);
+    console.error("AIError:", error);
     
-    let errorMessage = "Terjadi kesalahan pada server AI Google Gemini. Silakan coba beberapa saat lagi.";
+    let errorMessage = "Terjadi kesalahan pada server AI. Silakan coba beberapa saat lagi.";
     if (error.message.includes("429") || error.message.includes("quota")) {
-      errorMessage = "Kuota API Gemini Anda telah habis untuk saat ini. Silakan tunggu beberapa menit dan coba lagi.";
+      errorMessage = "Kuota API AI Anda telah habis untuk saat ini. Silakan tunggu beberapa menit dan coba lagi.";
     }
 
     return NextResponse.json(
