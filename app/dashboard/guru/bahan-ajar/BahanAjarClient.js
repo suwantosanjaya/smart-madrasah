@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createBahanAjar, updateBahanAjar, deleteBahanAjar } from "@/app/actions/bahan-ajar";
+import { getSettings } from "@/app/actions/settings";
 import {
   Dialog,
   DialogContent,
@@ -49,6 +50,19 @@ export default function BahanAjarClient({ initialData, mapelData, rppData }) {
   const [deletingId, setDeletingId] = useState(null);
   const [isLoadingAI, setIsLoadingAI] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [activeModelName, setActiveModelName] = useState("");
+
+  useEffect(() => {
+    async function loadSettings() {
+      const res = await getSettings();
+      if (res.success && res.data) {
+        const provider = res.data["ACTIVE_AI_PROVIDER"] || "gemini";
+        const model = res.data["ACTIVE_AI_MODEL"] || "gemini-pro";
+        setActiveModelName(`${provider.toUpperCase()} (${model})`);
+      }
+    }
+    loadSettings();
+  }, []);
 
   const [formData, setFormData] = useState({
     judul: "",
@@ -327,6 +341,7 @@ export default function BahanAjarClient({ initialData, mapelData, rppData }) {
                       type="button" 
                       onClick={handleAIGenerateKonten}
                       disabled={isLoadingAI}
+                      title={activeModelName ? `Didukung oleh: ${activeModelName}` : "Didukung oleh AI"}
                       className="h-7 text-[10px] border-amber-200 bg-amber-50 text-amber-600 hover:bg-amber-100"
                     >
                       <Sparkles className="w-3 h-3 mr-1" />
